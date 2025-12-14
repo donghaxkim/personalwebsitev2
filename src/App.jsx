@@ -4,15 +4,16 @@ import { MdEmail } from 'react-icons/md'
 import { FaLinkedin, FaGithub, FaXTwitter } from 'react-icons/fa6'
 import Navbar from './Navbar'
 import SplashCursor from './SplashCursor'
+import SpotifyPlayer from './components/SpotifyPlayer'
 
 function App() {
   const [theme, setTheme] = useState('light')
+  const [playerOpen, setPlayerOpen] = useState(false)
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme')
-    if (savedTheme) {
-      setTheme(savedTheme)
-    }
+    // Force default theme to light on first load
+    setTheme('light')
+    localStorage.setItem('theme', 'light')
   }, [])
 
   const toggleTheme = () => {
@@ -33,8 +34,8 @@ function App() {
         {/* Splash Cursor Effect (smaller splashes) */}
         <SplashCursor
           theme={theme}
-          SPLAT_RADIUS={0.05}
-          SPLAT_FORCE={1500}
+          SPLAT_RADIUS={0.08}
+          SPLAT_FORCE={4500}
           COLOR_UPDATE_SPEED={8}
         />
         
@@ -244,6 +245,11 @@ function App() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Spotify Player in bottom-right */}
+        <div className="fixed bottom-4 right-4 z-50 max-w-[320px]">
+          <SpotifyPlayer isExpanded={playerOpen} onToggle={() => setPlayerOpen((v) => !v)} theme={theme} />
+        </div>
       </main>
     </motion.div>
   )
