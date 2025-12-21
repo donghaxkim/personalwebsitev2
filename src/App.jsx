@@ -75,7 +75,7 @@ const Home = ({ theme }) => {
         </p>
         
         {/* Social Media Icons */}
-        <div className="flex gap-4 mt-14">
+        <div className="flex gap-4 mt-14 select-none">
           <a
             href="mailto:dongha.kim@uwaterloo.ca"
             target="_blank"
@@ -83,6 +83,7 @@ const Home = ({ theme }) => {
             className={`transition-opacity ${
               theme === 'dark' ? 'text-white/60 hover:text-white/90' : 'text-black/60 hover:text-black/90'
             }`}
+            draggable={false}
           >
             <MdEmail size={20} />
           </a>
@@ -93,6 +94,7 @@ const Home = ({ theme }) => {
             className={`transition-opacity ${
               theme === 'dark' ? 'text-white/60 hover:text-white/90' : 'text-black/60 hover:text-black/90'
             }`}
+            draggable={false}
           >
             <FaLinkedin size={20} />
           </a>
@@ -103,6 +105,7 @@ const Home = ({ theme }) => {
             className={`transition-opacity ${
               theme === 'dark' ? 'text-white/60 hover:text-white/90' : 'text-black/60 hover:text-black/90'
             }`}
+            draggable={false}
           >
             <FaGithub size={20} />
           </a>
@@ -113,6 +116,7 @@ const Home = ({ theme }) => {
             className={`transition-opacity ${
               theme === 'dark' ? 'text-white/60 hover:text-white/90' : 'text-black/60 hover:text-black/90'
             }`}
+            draggable={false}
           >
             <FaXTwitter size={20} />
           </a>

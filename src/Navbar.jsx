@@ -15,11 +15,12 @@ const Navbar = ({ theme, toggleTheme }) => {
       <nav
         className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50"
       >
-        <div className={`h-[72px] rounded-full w-[520px] px-8 flex items-center justify-between text-2xl ${glassClass} ${iconColor} backdrop-blur-3xl`}>
+        <div className={`h-[72px] rounded-full w-[520px] px-8 flex items-center justify-between text-2xl ${glassClass} ${iconColor} backdrop-blur-3xl select-none`}>
             <RouterLink
               to="/"
               className={`cursor-pointer w-[56px] h-[56px] flex items-center justify-center ${iconHover} transition-all duration-200`}
               title="home"
+              draggable={false}
             >
               <BiHomeAlt />
             </RouterLink>
@@ -28,6 +29,7 @@ const Navbar = ({ theme, toggleTheme }) => {
               to="/projects"
               className={`cursor-pointer w-[56px] h-[56px] flex items-center justify-center ${iconHover} transition-all duration-200`}
               title="projects"
+              draggable={false}
             >
               <FaCubes />
             </RouterLink>
@@ -36,6 +38,7 @@ const Navbar = ({ theme, toggleTheme }) => {
               to="/grid"
               className={`cursor-pointer w-[56px] h-[56px] flex items-center justify-center ${iconHover} transition-all duration-200`}
               title="gallery"
+              draggable={false}
             >
               <IoMdPhotos />
             </RouterLink>

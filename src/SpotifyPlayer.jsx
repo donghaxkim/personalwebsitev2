@@ -227,7 +227,8 @@ export default function SpotifyPlayer({ theme = 'light' }) {
               <img 
                 src={currentTrack.albumArt}
                 alt={currentTrack.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover select-none"
+                draggable={false}
               />
             </div>
             <AnimatePresence>

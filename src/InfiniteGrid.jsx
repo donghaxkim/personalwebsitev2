@@ -116,7 +116,7 @@ const InfiniteGrid = ({ theme }) => {
   return (
     <div 
       onMouseMove={(e) => { mouseX.set(e.clientX); mouseY.set(e.clientY) }}
-      className={`w-full h-screen overflow-hidden relative touch-none select-none ${theme === 'dark' ? 'bg-[#0a0a0a]' : 'bg-[#fafafa]'}`}
+      className={`w-full h-screen overflow-hidden relative touch-none select-none transition-colors duration-500 ${theme === 'dark' ? 'bg-[#1e1e1e]' : 'bg-white'}`}
     >
       <motion.div 
         onPanStart={onPanStart}
@@ -139,7 +139,6 @@ const InfiniteGrid = ({ theme }) => {
             mouseY={mouseY}
             gridWidth={gridConfig.cols * TOTAL_CELL}
             gridHeight={gridConfig.rows * TOTAL_CELL}
-            theme={theme}
           />
         ))}
       </motion.div>
@@ -149,7 +148,7 @@ const InfiniteGrid = ({ theme }) => {
           <motion.div 
             initial={{ opacity: 1 }}
             exit={{ opacity: 0, transition: { duration: 0.2 } }}
-            className={`fixed inset-0 z-[100] flex items-center justify-center ${theme === 'dark' ? 'bg-[#0a0a0a]' : 'bg-[#fafafa]'}`}
+            className={`fixed inset-0 z-[100] flex items-center justify-center transition-colors duration-500 ${theme === 'dark' ? 'bg-[#1e1e1e]' : 'bg-white'}`}
           >
             <svg className="w-6 h-6 -rotate-90" viewBox="0 0 100 100">
               <circle
@@ -157,7 +156,7 @@ const InfiniteGrid = ({ theme }) => {
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="8"
-                className="text-neutral-200 dark:text-neutral-800"
+                className="text-neutral-200 dark:text-neutral-800 transition-colors duration-500"
                 opacity="0.3"
               />
               <motion.circle
@@ -166,7 +165,7 @@ const InfiniteGrid = ({ theme }) => {
                 stroke="currentColor"
                 strokeWidth="8"
                 strokeLinecap="round"
-                className="text-neutral-500"
+                className="text-neutral-500 transition-colors duration-500"
                 initial={{ pathLength: 0 }}
                 animate={{ pathLength: loadedCount / IMAGE_URLS.length }}
                 transition={{ duration: 0.15, ease: "easeOut" }}
@@ -180,7 +179,7 @@ const InfiniteGrid = ({ theme }) => {
   )
 }
 
-const GridItem = memo(({ item, x, y, mouseX, mouseY, gridWidth, gridHeight, theme }) => {
+const GridItem = memo(({ item, x, y, mouseX, mouseY, gridWidth, gridHeight }) => {
   const tx = useTransform(x, (v) => mod((item.relX * TOTAL_CELL) + v + TOTAL_CELL, gridWidth) - TOTAL_CELL)
   const ty = useTransform(y, (v) => mod((item.relY * TOTAL_CELL) + v + TOTAL_CELL, gridHeight) - TOTAL_CELL)
 
@@ -211,9 +210,7 @@ const GridItem = memo(({ item, x, y, mouseX, mouseY, gridWidth, gridHeight, them
       }}
       className="pointer-events-none"
     >
-      <div className={`w-full h-full rounded-2xl overflow-hidden shadow-2xl ${
-        theme === 'dark' ? 'bg-white/5 ring-1 ring-white/10' : 'bg-black/5 ring-1 ring-black/5'
-      }`}>
+      <div className="w-full h-full rounded-2xl overflow-hidden shadow-2xl">
         <img
           src={item.imgUrl}
           alt=""
@@ -226,7 +223,7 @@ const GridItem = memo(({ item, x, y, mouseX, mouseY, gridWidth, gridHeight, them
     </motion.div>
   )
 }, (prevProps, nextProps) => 
-  prevProps.item.id === nextProps.item.id && prevProps.theme === nextProps.theme
+  prevProps.item.id === nextProps.item.id
 )
 
 export default InfiniteGrid
