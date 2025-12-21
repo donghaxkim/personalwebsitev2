@@ -117,7 +117,13 @@ const InfiniteGrid = ({ theme }) => {
   return (
     <div 
       onMouseMove={(e) => { mouseX.set(e.clientX); mouseY.set(e.clientY) }}
-      className={`w-full h-screen overflow-hidden relative touch-none select-none transition-colors duration-500 ${theme === 'dark' ? 'bg-[#1e1e1e]' : 'bg-white'}`}
+      onTouchMove={(e) => {
+        if (e.touches.length > 0) {
+          mouseX.set(e.touches[0].clientX)
+          mouseY.set(e.touches[0].clientY)
+        }
+      }}
+      className={`w-full h-screen overflow-hidden relative select-none transition-colors duration-500 ${theme === 'dark' ? 'bg-[#1e1e1e]' : 'bg-white'}`}
     >
       <motion.div 
         onPanStart={onPanStart}
@@ -127,7 +133,9 @@ const InfiniteGrid = ({ theme }) => {
         style={{ 
           cursor: isDragging ? 'grabbing' : 'grab',
           opacity: isReady ? 1 : 0,
-          pointerEvents: isReady ? 'auto' : 'none'
+          pointerEvents: isReady ? 'auto' : 'none',
+          WebkitUserSelect: 'none',
+          touchAction: 'none'
         }}
       >
         {gridConfig.items.map((item) => (
