@@ -16,6 +16,11 @@ const Projects = ({ theme }) => {
       name: "Task Management System",
       techStack: ["React", "Node.js", "MongoDB", "Express"],
       description: "A full-stack web application for managing team projects and individual tasks. Includes real-time updates, collaborative features, and progress tracking."
+    },
+    {
+      name: "Barber Shop Website",
+      techStack: ["React", "Tailwind CSS", "JavaScript"],
+      description: "A modern, responsive website for a local barbershop featuring online booking, service showcase, and gallery. Designed with a clean aesthetic to reflect the shop's professional atmosphere and streamline customer appointments."
     }
   ]
 
@@ -25,12 +30,12 @@ const Projects = ({ theme }) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.5 }}
-      className="w-full max-w-2xl mx-auto"
-      style={{ marginTop: '-16rem' }}
+      className="w-full max-w-2xl mx-auto h-full overflow-y-auto px-4"
+      style={{ paddingTop: '2rem', paddingBottom: '4rem' }}
     >
       <h1 
-        className="text-6xl md:text-6xl font-semibold tracking-tighter text-left" 
-        style={{ fontFamily: "'Gowun Batang', serif", marginBottom: '0.88rem' }}
+        className="text-6xl md:text-6xl font-semibold tracking-tighter text-left mb-8" 
+        style={{ fontFamily: "'Gowun Batang', serif" }}
       >
         Projects
       </h1>
