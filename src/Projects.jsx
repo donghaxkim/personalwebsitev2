@@ -3,24 +3,19 @@ import { motion } from 'framer-motion'
 const Projects = ({ theme }) => {
   const projects = [
     {
-      name: "Portfolio Website",
+      name: "Personal Website v2",
+      techStack: ["Next.js", "React", "Vite", "Tailwind CSS", "Framer Motion"],
+      description: "A refined iteration of my digital presence, utilizing Next.js for server-side rendering and optimized performance. Features advanced motion layouts and a streamlined user experience."
+    },
+    {
+      name: "Personal Website v1",
       techStack: ["React", "Tailwind CSS", "Framer Motion", "Vite"],
       description: "A minimalistic personal portfolio with interactive fluid animations and a custom Spotify player. Built with modern web technologies for a smooth, responsive experience."
     },
     {
-      name: "Math Solver Application",
-      techStack: ["Python", "NumPy", "Flask"],
-      description: "A computational mathematics tool for solving complex equations and visualizing mathematical concepts. Features include matrix operations, calculus computations, and interactive graphs."
-    },
-    {
-      name: "Task Management System",
-      techStack: ["React", "Node.js", "MongoDB", "Express"],
-      description: "A full-stack web application for managing team projects and individual tasks. Includes real-time updates, collaborative features, and progress tracking."
-    },
-    {
-      name: "Barber Shop Website",
-      techStack: ["React", "Tailwind CSS", "JavaScript"],
-      description: "A modern, responsive website for a local barbershop featuring online booking, service showcase, and gallery. Designed with a clean aesthetic to reflect the shop's professional atmosphere and streamline customer appointments."
+      name: "Langton's Ant Sim",
+      techStack: ["Python", "NumPy", "Matplotlib"],
+      description: "A simulation of the two-dimensional universal Turing machine. This project visualizes emergent behavior and complex patterns using cellular automata logic."
     }
   ]
 
@@ -31,7 +26,8 @@ const Projects = ({ theme }) => {
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.5 }}
       className="w-full max-w-2xl mx-auto h-full overflow-y-auto px-4"
-      style={{ paddingTop: '2rem', paddingBottom: '4rem' }}
+      // Heading is kept lower with 6rem padding
+      style={{ paddingTop: '6rem', paddingBottom: '4rem' }}
     >
       <h1 
         className="text-6xl md:text-6xl font-semibold tracking-tighter text-left mb-8" 
