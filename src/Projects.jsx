@@ -1,21 +1,31 @@
 import { motion } from 'framer-motion'
+import { ExternalLink } from 'lucide-react'
 
 const Projects = ({ theme }) => {
   const projects = [
     {
+      name: "3D Vector Renderer",
+      techStack: ["Python", "Pygame", "NumPy"],
+      description: "A custom 3D engine built from scratch. It handles vector transformations, 3D-to-2D projection, and wireframe rendering of complex geometric shapes without external graphics libraries.",
+      github: "https://github.com/donghaxkim/3DRenderer"
+    },
+    {
       name: "Personal Website v2",
       techStack: ["Next.js", "React", "Vite", "Tailwind CSS", "Framer Motion"],
-      description: "A refined iteration of my digital presence, utilizing Next.js for server-side rendering and optimized performance. Features advanced motion layouts and a streamlined user experience."
+      description: "A refined iteration of my digital presence, utilizing Next.js for server-side rendering and optimized performance. Features advanced motion layouts.",
+      github: "https://github.com/yourusername/portfolio-v2"
     },
     {
       name: "Personal Website v1",
       techStack: ["React", "Tailwind CSS", "Framer Motion", "Vite"],
-      description: "A minimalistic personal portfolio with interactive fluid animations and a custom Spotify player. Built with modern web technologies for a smooth, responsive experience."
+      description: "A minimalistic personal portfolio with interactive fluid animations and a custom Spotify player.",
+      github: "https://github.com/yourusername/portfolio-v1"
     },
     {
       name: "Langton's Ant Sim",
       techStack: ["Python", "NumPy", "Matplotlib"],
-      description: "A simulation of the two-dimensional universal Turing machine. This project visualizes emergent behavior and complex patterns using cellular automata logic."
+      description: "A simulation of the two-dimensional universal Turing machine visualizing emergent behavior and cellular automata logic.",
+      github: "https://github.com/yourusername/langtons-ant"
     }
   ]
 
@@ -26,12 +36,11 @@ const Projects = ({ theme }) => {
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.5 }}
       className="w-full max-w-2xl mx-auto h-full overflow-y-auto px-4"
-      // Heading is kept lower with 6rem padding
       style={{ paddingTop: '6rem', paddingBottom: '4rem' }}
     >
       <h1 
-        className="text-6xl md:text-6xl font-semibold tracking-tighter text-left mb-8" 
-        style={{ fontFamily: "'Gowun Batang', serif" }}
+        className="text-6xl md:text-6xl font-semibold tracking-tighter text-left" 
+        style={{ fontFamily: "'Gowun Batang', serif", marginBottom: '0.88rem' }}
       >
         Projects
       </h1>
@@ -41,7 +50,7 @@ const Projects = ({ theme }) => {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
         className="space-y-12 md:space-y-16"
-        style={{ fontFamily: "'Karla', sans-serif" }}
+        style={{ fontFamily: "'Karla', sans-serif", marginTop: '0' }} // Reset margin top to ensure precision
       >
         {projects.map((project, index) => (
           <motion.div
@@ -53,9 +62,19 @@ const Projects = ({ theme }) => {
               theme === 'dark' ? 'text-white/80' : 'text-black/80'
             }`}
           >
-            <h2 className="text-xl md:text-2xl font-medium mb-3 md:mb-4" style={{ fontFamily: "'Karla', sans-serif" }}>
-              {project.name}
-            </h2>
+            <div className="flex items-center gap-3 mb-3 md:mb-4">
+              <h2 className="text-xl md:text-2xl font-medium" style={{ fontFamily: "'Karla', sans-serif" }}>
+                {project.name}
+              </h2>
+              <a 
+                href={project.github} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:opacity-60 transition-opacity"
+              >
+                <ExternalLink size={18} strokeWidth={1.5} />
+              </a>
+            </div>
             
             <div className="flex flex-wrap gap-2 mb-3 md:mb-4">
               {project.techStack.map((tech) => (
@@ -72,7 +91,7 @@ const Projects = ({ theme }) => {
               ))}
             </div>
             
-            <p className="text-sm md:text-base font-light leading-loose">
+            <p className="text-sm md:text-base font-light leading-tight">
               {project.description}
             </p>
           </motion.div>
