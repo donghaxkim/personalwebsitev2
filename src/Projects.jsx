@@ -4,7 +4,7 @@ import { ExternalLink } from 'lucide-react'
 const Projects = ({ theme }) => {
   const projects = [
     {
-      name: "3D Vector Renderer",
+      name: "3D Renderer",
       techStack: ["Python", "Pygame", "NumPy"],
       description: "A custom 3D engine built from scratch. It handles vector transformations, 3D-to-2D projection, and wireframe rendering of complex geometric shapes without external graphics libraries.",
       github: "https://github.com/donghaxkim/3DRenderer"
