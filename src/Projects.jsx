@@ -6,32 +6,32 @@ const Projects = ({ theme }) => {
     {
       name: "3D Renderer",
       techStack: ["Python", "Pygame", "NumPy"],
-      description: "A custom 3D engine built from scratch. It handles vector transformations, 3D-to-2D projection, and wireframe rendering of complex geometric shapes without external graphics libraries.",
+      description: "An interactive wireframe editor that allows you to construct, manipulate, and rotate 3D mesh structures in real-time through a perspective-accurate workspace.",
       github: "https://github.com/donghaxkim/3DRenderer"
     },
     {
       name: "Personal Website v2",
       techStack: ["Next.js", "React", "Vite", "Tailwind CSS", "Framer Motion"],
-      description: "A refined iteration of my digital presence, utilizing Next.js for server-side rendering and optimized performance. Features advanced motion layouts.",
+      description: "This one :)",
       github: "https://github.com/donghaxkim/personalwebsitev2"
     },
     {
       name: "Bayesian Blackwell BlackJack Engine",
       techStack: ["NumPy", "SciPy", "Typing", "Functools", "Pathlib", "Dataclasses"],
-      description: "A high-performance simulation engine utilizing Bayesian inference and Blackwell games theory to optimize Blackjack strategies. Built with a focus on functional programming patterns and rigorous scientific computing.",
+      description: "A quantitative blackjack advisor that uses statistical modeling to provide real-time optimal play recommendations by analyzing shifting shoe probabilities and expected value.",
       github: "https://github.com/donghaxkim/Bayesian-BlackJack-Engine"
     },
     {
       name: "Personal Website v1",
       techStack: ["React", "Tailwind CSS", "Framer Motion", "Vite"],
-      description: "A minimalistic personal portfolio with interactive fluid animations and a custom Spotify player.",
-      github: "https://github.com/yourusername/portfolio-v1"
+      description: "My first website.",
+      github: "https://personalwebsitev1-sable.vercel.app/"
     },
     {
       name: "Langton's Ant Sim",
       techStack: ["Python", "NumPy", "Matplotlib"],
-      description: "A simulation of the two-dimensional universal Turing machine visualizing emergent behavior and cellular automata logic.",
-      github: "https://github.com/yourusername/langtons-ant"
+      description: "An interactive cellular automaton simulation that visualizes emergent complexity by tracking multiple autonomous agents.",
+      github: "https://github.com/donghaxkim/LangtonsAnt"
     }
   ]
 
