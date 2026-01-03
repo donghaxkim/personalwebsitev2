@@ -36,7 +36,7 @@ const Home = ({ theme }) => {
         </p>
         
         <p>
-          Outside of the classroom, you can find me on the basketball court, catching up with friends, or hanging out with my cat, <strong className="font-medium">Maui</strong>. I also enjoy sharing my perspectives on random things <strong className="font-medium">@imdonghakim</strong> on both{' '}
+          Outside of the classroom, you can find me on the basketball court, catching up with friends, or hanging out with my cat, <strong className="font-medium">Maui</strong>. I also enjoy sharing my perspectives on random things at <strong className="font-medium">@imdonghakim</strong> on both{' '}
           <a
             href="https://instagram.com/imdonghakim"
             target="_blank"

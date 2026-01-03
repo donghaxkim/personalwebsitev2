@@ -6,7 +6,7 @@ import eaImg from './public/ea.jpeg'
 import starboyImg from './public/starboy.jpg'
 import takecareImg from './public/takecare.jpg'
 import lionelImg from './public/lionel.jpg'
-import dominicFikeImg from './web.ae_.dominicfike.review.courtesy.jpg'
+import dominicImg from './public/dominic.jpg'
 import overMyDeadBodyAudio from './public/Over My Dead Body.mp3'
 import iFeelItComingAudio from './public/I Feel It Coming.mp3'
 import pastLifeAudio from './public/Tame Impala - Past Life (Audio).mp3'
@@ -48,7 +48,7 @@ const trackPool = [
   {
     title: 'Chicken Tenders',
     artist: 'Dominic Fike',
-    albumArt: dominicFikeImg,
+    albumArt: dominicImg,
     audioSrc: chickenTendersAudio,
   },
 ]
