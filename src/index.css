@@ -156,3 +156,20 @@ body {
   }
 }
 
+/* Tooltip custom styles */
+.bg-primary-solid {
+  background-color: rgb(30, 30, 30);
+}
+
+.fill-bg-primary-solid {
+  fill: rgb(30, 30, 30);
+}
+
+.text-tooltip-supporting-text {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.outline-hidden {
+  outline: none;
+}
+

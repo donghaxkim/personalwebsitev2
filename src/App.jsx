@@ -62,7 +62,7 @@ const Home = ({ theme }) => {
         </p>
         
         <p>
-          I'm always excited to meet new people, whether it's to discuss a potential project, a professional opportunity, or just to have an insightful chat. Feel free to reach out{' '}
+          I'm always excited to meet new people, whether it's to discuss a potential project, an opportunity, or even just to chat. Feel free to reach out{' '}
           <a
             href="mailto:dongha.kim@uwaterloo.ca"
             className={`font-medium underline ${

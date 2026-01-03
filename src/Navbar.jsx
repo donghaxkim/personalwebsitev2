@@ -3,6 +3,7 @@ import { FaCubes } from 'react-icons/fa'
 import { IoMdPhotos } from 'react-icons/io'
 import { WiMoonAltThirdQuarter, WiDaySunny } from 'react-icons/wi'
 import { Link as RouterLink } from 'react-router-dom'
+import { Tooltip, TooltipTrigger } from './components/Tooltip'
 
 const Navbar = ({ theme, toggleTheme }) => {
   const glassClass = theme === 'dark' ? 'glass-dark' : 'glass-light'
@@ -16,40 +17,52 @@ const Navbar = ({ theme, toggleTheme }) => {
         className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50"
       >
         <div className={`h-[72px] rounded-full w-[520px] px-8 flex items-center justify-between text-2xl ${glassClass} ${iconColor} backdrop-blur-3xl select-none`}>
-            <RouterLink
-              to="/"
-              className={`cursor-pointer w-[56px] h-[56px] flex items-center justify-center ${iconHover} transition-all duration-200`}
-              title="home"
-              draggable={false}
-            >
-              <BiHomeAlt />
-            </RouterLink>
+            <Tooltip title="home" placement="bottom" delay={500} arrow>
+              <TooltipTrigger>
+                <RouterLink
+                  to="/"
+                  className={`cursor-pointer w-[56px] h-[56px] flex items-center justify-center ${iconHover} transition-all duration-200`}
+                  draggable={false}
+                >
+                  <BiHomeAlt />
+                </RouterLink>
+              </TooltipTrigger>
+            </Tooltip>
 
-            <RouterLink
-              to="/projects"
-              className={`cursor-pointer w-[56px] h-[56px] flex items-center justify-center ${iconHover} transition-all duration-200`}
-              title="projects"
-              draggable={false}
-            >
-              <FaCubes />
-            </RouterLink>
+            <Tooltip title="projects" placement="bottom" delay={500} arrow>
+              <TooltipTrigger>
+                <RouterLink
+                  to="/projects"
+                  className={`cursor-pointer w-[56px] h-[56px] flex items-center justify-center ${iconHover} transition-all duration-200`}
+                  draggable={false}
+                >
+                  <FaCubes />
+                </RouterLink>
+              </TooltipTrigger>
+            </Tooltip>
 
-            <RouterLink
-              to="/grid"
-              className={`cursor-pointer w-[56px] h-[56px] flex items-center justify-center ${iconHover} transition-all duration-200`}
-              title="gallery"
-              draggable={false}
-            >
-              <IoMdPhotos />
-            </RouterLink>
+            <Tooltip title="gallery" placement="bottom" delay={500} arrow>
+              <TooltipTrigger>
+                <RouterLink
+                  to="/grid"
+                  className={`cursor-pointer w-[56px] h-[56px] flex items-center justify-center ${iconHover} transition-all duration-200`}
+                  draggable={false}
+                >
+                  <IoMdPhotos />
+                </RouterLink>
+              </TooltipTrigger>
+            </Tooltip>
 
-            <div
-              className={`cursor-pointer w-[56px] h-[56px] flex items-center justify-center ${iconHover} transition-all duration-200`}
-              onClick={toggleTheme}
-              title={theme === 'dark' ? 'toggle light mode' : 'toggle dark mode'}
-            >
-              {theme === 'dark' ? <WiDaySunny /> : <WiMoonAltThirdQuarter />}
-            </div>
+            <Tooltip title={theme === 'dark' ? 'light mode' : 'dark mode'} placement="bottom" delay={500} arrow>
+              <TooltipTrigger>
+                <div
+                  className={`cursor-pointer w-[56px] h-[56px] flex items-center justify-center ${iconHover} transition-all duration-200`}
+                  onClick={toggleTheme}
+                >
+                  {theme === 'dark' ? <WiDaySunny /> : <WiMoonAltThirdQuarter />}
+                </div>
+              </TooltipTrigger>
+            </Tooltip>
         </div>
       </nav>
 
