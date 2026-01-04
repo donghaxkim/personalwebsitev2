@@ -13,6 +13,37 @@ const VisitorCounter = ({ theme }) => {
     setShowCounter(isAdmin)
   }, [searchParams])
 
+  // Track total visits (runs on every page load)
+  useEffect(() => {
+    const namespace = 'dongha-kim-portfolio'
+    const key = 'total-visits'
+    
+    // Prevent counting multiple times within 2 seconds (for rapid navigation)
+    const lastCountTime = sessionStorage.getItem('lastVisitCount')
+    const now = Date.now()
+    const shouldCount = !lastCountTime || (now - parseInt(lastCountTime)) > 2000
+    
+    const trackVisit = async () => {
+      try {
+        // Always increment the count (total visits)
+        const hitResponse = await fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`)
+        const hitData = await hitResponse.json()
+        
+        if (hitData.value !== undefined) {
+          sessionStorage.setItem('lastVisitCount', now.toString())
+        }
+      } catch (error) {
+        console.error('Error tracking visit:', error)
+      }
+    }
+
+    // Track the visit (always, but with rate limiting)
+    if (shouldCount) {
+      trackVisit()
+    }
+  }, [])
+
+  // Fetch and display count (only when admin mode is enabled)
   useEffect(() => {
     if (!showCounter) {
       setIsLoading(false)
@@ -20,10 +51,7 @@ const VisitorCounter = ({ theme }) => {
     }
 
     const namespace = 'dongha-kim-portfolio'
-    const key = 'visitor-count'
-    
-    // Check if this is a new visitor (not in sessionStorage)
-    const hasVisited = sessionStorage.getItem('hasVisited')
+    const key = 'total-visits'
     
     const fetchCount = async () => {
       try {
@@ -34,22 +62,10 @@ const VisitorCounter = ({ theme }) => {
         if (getData.value !== undefined) {
           setVisitorCount(getData.value)
         }
-        
-        // Increment count if this is a new visitor in this session
-        if (!hasVisited) {
-          const hitResponse = await fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`)
-          const hitData = await hitResponse.json()
-          
-          if (hitData.value !== undefined) {
-            setVisitorCount(hitData.value)
-            sessionStorage.setItem('hasVisited', 'true')
-          }
-        }
       } catch (error) {
         console.error('Error fetching visitor count:', error)
         // Fallback to localStorage if API fails
-        const localCount = parseInt(localStorage.getItem('visitorCount') || '0') + 1
-        localStorage.setItem('visitorCount', localCount.toString())
+        const localCount = parseInt(localStorage.getItem('totalVisits') || '0')
         setVisitorCount(localCount)
       } finally {
         setIsLoading(false)
@@ -57,6 +73,10 @@ const VisitorCounter = ({ theme }) => {
     }
 
     fetchCount()
+    
+    // Refresh count every 5 seconds when admin mode is on
+    const interval = setInterval(fetchCount, 5000)
+    return () => clearInterval(interval)
   }, [showCounter])
 
   // Don't render anything if admin mode is not enabled
@@ -75,7 +95,7 @@ const VisitorCounter = ({ theme }) => {
     >
       {visitorCount !== null && (
         <span>
-          {visitorCount.toLocaleString()} {visitorCount === 1 ? 'visitor' : 'visitors'}
+          {visitorCount.toLocaleString()} {visitorCount === 1 ? 'visit' : 'visits'}
         </span>
       )}
     </div>
