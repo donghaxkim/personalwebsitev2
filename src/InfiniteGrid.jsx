@@ -10,8 +10,7 @@ const GAP = 25
 const TOTAL_CELL = CELL_SIZE + GAP
 const SPRING_CONFIG = { damping: 40, stiffness: 200, mass: 0.5 }
 const SCALE_SPRING = { damping: 25, stiffness: 300, mass: 0.2 }
-const PRELOAD_CONCURRENCY = 6
-const RETRY_DELAY_MS = 500
+const PRELOAD_CONCURRENCY = 20 // Increased from 6
 
 const mod = (n, m) => ((n % m) + m) % m
 
@@ -28,6 +27,7 @@ const InfiniteGrid = ({ theme }) => {
   const [containerSize, setContainerSize] = useState({ width: window.innerWidth, height: window.innerHeight })
   const [isReady, setIsReady] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
+  const [loadProgress, setLoadProgress] = useState(0)
   
   const rawX = useMotionValue(0)
   const rawY = useMotionValue(0)
@@ -38,41 +38,64 @@ const InfiniteGrid = ({ theme }) => {
 
   const shuffledImages = useMemo(() => shuffleArray(IMAGE_URLS), [])
 
-  // Show grid immediately; images lazy-load as they enter viewport
-  useEffect(() => {
-    const id = requestAnimationFrame(() => setIsReady(true))
-    return () => cancelAnimationFrame(id)
-  }, [])
-
-  // Guarantee all images load: preload every image in background (batched + retry failed)
+  // Optimized preloading: all at once with higher concurrency
   useEffect(() => {
     let cancelled = false
-    const loadOne = (url) =>
-      new Promise((resolve) => {
+    const imageCache = new Map()
+    
+    const loadOne = async (url) => {
+      try {
+        // Create image element
         const img = new Image()
-        img.onload = () => resolve(true)
-        img.onerror = () => resolve(false)
+        img.fetchPriority = 'high' // Prioritize image loading
+        img.decoding = 'async' // Decode off main thread
+        
+        // Create promise that resolves on load
+        const loadPromise = new Promise((resolve, reject) => {
+          img.onload = () => {
+            // Decode the image off the main thread
+            img.decode()
+              .then(() => {
+                imageCache.set(url, img)
+                resolve(true)
+              })
+              .catch(() => resolve(true)) // Still resolve even if decode fails
+          }
+          img.onerror = () => resolve(false) // Don't reject, just mark as failed
+        })
+        
+        // Start loading
         img.src = url
-      })
-
-    const runBatch = async (urls) => {
-      const results = await Promise.all(urls.map(loadOne))
-      return results
+        
+        return loadPromise
+      } catch {
+        return false
+      }
     }
 
     const preloadAll = async () => {
-      const failed = []
-      for (let i = 0; i < shuffledImages.length && !cancelled; i += PRELOAD_CONCURRENCY) {
+      const total = shuffledImages.length
+      let loaded = 0
+      
+      // Process in batches for better control
+      for (let i = 0; i < total && !cancelled; i += PRELOAD_CONCURRENCY) {
         const batch = shuffledImages.slice(i, i + PRELOAD_CONCURRENCY)
-        const results = await runBatch(batch)
-        batch.forEach((url, j) => {
-          if (!results[j]) failed.push(url)
-        })
+        
+        // Load batch in parallel
+        await Promise.all(batch.map(url => 
+          loadOne(url).then(success => {
+            if (success) loaded++
+            if (!cancelled) {
+              setLoadProgress(Math.round((loaded / total) * 100))
+            }
+          })
+        ))
       }
-      if (cancelled || failed.length === 0) return
-      await new Promise((r) => setTimeout(r, RETRY_DELAY_MS))
-      for (let i = 0; i < failed.length && !cancelled; i += PRELOAD_CONCURRENCY) {
-        await runBatch(failed.slice(i, i + PRELOAD_CONCURRENCY))
+      
+      if (!cancelled) {
+        // Small delay to ensure smooth transition
+        await new Promise(r => setTimeout(r, 100))
+        setIsReady(true)
       }
     }
 
@@ -162,11 +185,14 @@ const InfiniteGrid = ({ theme }) => {
         {!isReady && (
           <motion.div 
             initial={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.2 } }}
-            className={`fixed inset-0 z-[100] flex items-center justify-center transition-colors duration-500 ${theme === 'dark' ? 'bg-[#1e1e1e]' : 'bg-white'}`}
+            exit={{ opacity: 0, transition: { duration: 0.3 } }}
+            className={`fixed inset-0 z-[100] flex flex-col items-center justify-center transition-colors duration-500 ${theme === 'dark' ? 'bg-[#1e1e1e]' : 'bg-white'}`}
           >
             <div className="[&_.stroke-fg-brand-primary]:!stroke-neutral-500 [&_.text-bg-tertiary]:!text-neutral-300 dark:[&_.text-bg-tertiary]:!text-neutral-700">
               <LoadingIndicator type="line-simple" size="md" />
+            </div>
+            <div className="mt-4 text-neutral-500 dark:text-neutral-400 text-sm font-medium">
+              Loading images... {loadProgress}%
             </div>
           </motion.div>
         )}
@@ -212,7 +238,7 @@ const GridItem = memo(({ item, x, y, mouseX, mouseY, gridWidth, gridHeight }) =>
           src={item.imgUrl}
           alt=""
           className={`w-full h-full object-cover absolute inset-0 transition-opacity duration-200 ${loaded ? 'opacity-100' : 'opacity-0'}`}
-          loading="lazy"
+          fetchpriority="high"
           decoding="async"
           draggable={false}
           onLoad={() => setLoaded(true)}
