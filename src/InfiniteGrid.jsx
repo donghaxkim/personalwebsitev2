@@ -1,6 +1,5 @@
-import { useState, useEffect, useMemo, useCallback, memo } from 'react'
+import { useState, useEffect, useMemo, useCallback, memo, useRef } from 'react'
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion'
-import { LoadingIndicator } from '@/components/application/loading-indicator/loading-indicator'
 
 const images = import.meta.glob('./public/toWEBP/*.webp', { eager: true, import: 'default' })
 const IMAGE_URLS = Object.values(images)
@@ -28,6 +27,9 @@ const InfiniteGrid = ({ theme }) => {
   const [isReady, setIsReady] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const [loadProgress, setLoadProgress] = useState(0)
+  const [displayProgress, setDisplayProgress] = useState(0)
+  const displayRef = useRef(0)
+  const intervalRef = useRef(null)
   
   const rawX = useMotionValue(0)
   const rawY = useMotionValue(0)
@@ -37,6 +39,27 @@ const InfiniteGrid = ({ theme }) => {
   const mouseY = useMotionValue(0)
 
   const shuffledImages = useMemo(() => shuffleArray(IMAGE_URLS), [])
+
+  // Animate displayed % upward slowly (so it doesn't jump to 100%)
+  useEffect(() => {
+    if (intervalRef.current) clearInterval(intervalRef.current)
+    intervalRef.current = setInterval(() => {
+      if (displayRef.current >= loadProgress) return
+      displayRef.current = Math.min(displayRef.current + 1, loadProgress)
+      setDisplayProgress(displayRef.current)
+    }, 180)
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
+  }, [loadProgress])
+
+  // Reset displayed progress when starting a new load
+  useEffect(() => {
+    if (loadProgress === 0) {
+      displayRef.current = 0
+      setDisplayProgress(0)
+    }
+  }, [loadProgress])
 
   // Optimized preloading: all at once with higher concurrency
   useEffect(() => {
@@ -186,14 +209,14 @@ const InfiniteGrid = ({ theme }) => {
           <motion.div 
             initial={{ opacity: 1 }}
             exit={{ opacity: 0, transition: { duration: 0.3 } }}
-            className={`fixed inset-0 z-[100] flex flex-col items-center justify-center transition-colors duration-500 ${theme === 'dark' ? 'bg-[#1e1e1e]' : 'bg-white'}`}
+            className={`fixed inset-0 z-[100] flex items-center justify-center transition-colors duration-500 ${theme === 'dark' ? 'bg-[#1e1e1e]' : 'bg-white'}`}
           >
-            <div className="[&_.stroke-fg-brand-primary]:!stroke-neutral-500 [&_.text-bg-tertiary]:!text-neutral-300 dark:[&_.text-bg-tertiary]:!text-neutral-700">
-              <LoadingIndicator type="line-simple" size="md" />
-            </div>
-            <div className="mt-4 text-neutral-500 dark:text-neutral-400 text-sm font-medium">
-              Loading images... {loadProgress}%
-            </div>
+            <span 
+              className={`text-2xl font-light tabular-nums ${theme === 'dark' ? 'text-white/70' : 'text-black/70'}`}
+              style={{ fontFamily: "'Karla', sans-serif" }}
+            >
+              {displayProgress}%
+            </span>
           </motion.div>
         )}
       </AnimatePresence>
