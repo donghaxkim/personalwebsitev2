@@ -10,6 +10,8 @@ const GAP = 25
 const TOTAL_CELL = CELL_SIZE + GAP
 const SPRING_CONFIG = { damping: 40, stiffness: 200, mass: 0.5 }
 const SCALE_SPRING = { damping: 25, stiffness: 300, mass: 0.2 }
+const PRELOAD_CONCURRENCY = 6
+const RETRY_DELAY_MS = 500
 
 const mod = (n, m) => ((n % m) + m) % m
 
@@ -41,6 +43,42 @@ const InfiniteGrid = ({ theme }) => {
     const id = requestAnimationFrame(() => setIsReady(true))
     return () => cancelAnimationFrame(id)
   }, [])
+
+  // Guarantee all images load: preload every image in background (batched + retry failed)
+  useEffect(() => {
+    let cancelled = false
+    const loadOne = (url) =>
+      new Promise((resolve) => {
+        const img = new Image()
+        img.onload = () => resolve(true)
+        img.onerror = () => resolve(false)
+        img.src = url
+      })
+
+    const runBatch = async (urls) => {
+      const results = await Promise.all(urls.map(loadOne))
+      return results
+    }
+
+    const preloadAll = async () => {
+      const failed = []
+      for (let i = 0; i < shuffledImages.length && !cancelled; i += PRELOAD_CONCURRENCY) {
+        const batch = shuffledImages.slice(i, i + PRELOAD_CONCURRENCY)
+        const results = await runBatch(batch)
+        batch.forEach((url, j) => {
+          if (!results[j]) failed.push(url)
+        })
+      }
+      if (cancelled || failed.length === 0) return
+      await new Promise((r) => setTimeout(r, RETRY_DELAY_MS))
+      for (let i = 0; i < failed.length && !cancelled; i += PRELOAD_CONCURRENCY) {
+        await runBatch(failed.slice(i, i + PRELOAD_CONCURRENCY))
+      }
+    }
+
+    preloadAll()
+    return () => { cancelled = true }
+  }, [shuffledImages])
 
   useEffect(() => {
     const handleResize = () => setContainerSize({ width: window.innerWidth, height: window.innerHeight })
