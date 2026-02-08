@@ -10,10 +10,6 @@ const GAP = 25
 const TOTAL_CELL = CELL_SIZE + GAP
 const SPRING_CONFIG = { damping: 40, stiffness: 200, mass: 0.5 }
 const SCALE_SPRING = { damping: 25, stiffness: 300, mass: 0.2 }
-/** Show grid after this many images have loaded (viewport + buffer) */
-const READY_THRESHOLD = 24
-/** Load at most this many images in parallel to avoid blocking */
-const CONCURRENCY = 8
 
 const mod = (n, m) => ((n % m) + m) % m
 
@@ -29,7 +25,6 @@ const shuffleArray = (array) => {
 const InfiniteGrid = ({ theme }) => {
   const [containerSize, setContainerSize] = useState({ width: window.innerWidth, height: window.innerHeight })
   const [isReady, setIsReady] = useState(false)
-  const [loadedCount, setLoadedCount] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   
   const rawX = useMotionValue(0)
@@ -41,45 +36,11 @@ const InfiniteGrid = ({ theme }) => {
 
   const shuffledImages = useMemo(() => shuffleArray(IMAGE_URLS), [])
 
+  // Show grid immediately; images lazy-load as they enter viewport
   useEffect(() => {
-    let loaded = 0
-    let cancelled = false
-
-    const loadOne = (url) =>
-      new Promise((resolve) => {
-        const img = new Image()
-        img.onload = () => {
-          if (cancelled) return
-          loaded++
-          setLoadedCount(loaded)
-          if (loaded >= READY_THRESHOLD) setIsReady(true)
-          img.decode().catch(() => {}).then(resolve)
-        }
-        img.onerror = () => {
-          if (cancelled) return
-          loaded++
-          setLoadedCount(loaded)
-          if (loaded >= READY_THRESHOLD) setIsReady(true)
-          resolve()
-        }
-        img.src = url
-      })
-
-    const runBatch = async (start) => {
-      const batch = shuffledImages.slice(start, start + CONCURRENCY)
-      if (batch.length === 0) return
-      await Promise.all(batch.map(loadOne))
-      if (cancelled) return
-      if (start + CONCURRENCY < shuffledImages.length) {
-        await runBatch(start + CONCURRENCY)
-      } else {
-        setIsReady(true)
-      }
-    }
-
-    runBatch(0)
-    return () => { cancelled = true }
-  }, [shuffledImages])
+    const id = requestAnimationFrame(() => setIsReady(true))
+    return () => cancelAnimationFrame(id)
+  }, [])
 
   useEffect(() => {
     const handleResize = () => setContainerSize({ width: window.innerWidth, height: window.innerHeight })
@@ -177,6 +138,7 @@ const InfiniteGrid = ({ theme }) => {
 }
 
 const GridItem = memo(({ item, x, y, mouseX, mouseY, gridWidth, gridHeight }) => {
+  const [loaded, setLoaded] = useState(false)
   const tx = useTransform(x, (v) => mod((item.relX * TOTAL_CELL) + v + TOTAL_CELL, gridWidth) - TOTAL_CELL)
   const ty = useTransform(y, (v) => mod((item.relY * TOTAL_CELL) + v + TOTAL_CELL, gridHeight) - TOTAL_CELL)
 
@@ -207,14 +169,15 @@ const GridItem = memo(({ item, x, y, mouseX, mouseY, gridWidth, gridHeight }) =>
       }}
       className="pointer-events-none"
     >
-      <div className="w-full h-full rounded-2xl overflow-hidden shadow-2xl">
+      <div className="w-full h-full rounded-2xl overflow-hidden shadow-2xl relative bg-neutral-200 dark:bg-neutral-800">
         <img
           src={item.imgUrl}
           alt=""
-          className="w-full h-full object-cover"
-          loading="eager"
+          className={`w-full h-full object-cover absolute inset-0 transition-opacity duration-200 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+          loading="lazy"
           decoding="async"
           draggable={false}
+          onLoad={() => setLoaded(true)}
         />
       </div>
     </motion.div>
