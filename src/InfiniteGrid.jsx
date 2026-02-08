@@ -5,11 +5,15 @@ import { LoadingIndicator } from '@/components/application/loading-indicator/loa
 const images = import.meta.glob('./public/toWEBP/*.webp', { eager: true, import: 'default' })
 const IMAGE_URLS = Object.values(images)
 
-const CELL_SIZE = 280 
+const CELL_SIZE = 280
 const GAP = 25
 const TOTAL_CELL = CELL_SIZE + GAP
 const SPRING_CONFIG = { damping: 40, stiffness: 200, mass: 0.5 }
 const SCALE_SPRING = { damping: 25, stiffness: 300, mass: 0.2 }
+/** Show grid after this many images have loaded (viewport + buffer) */
+const READY_THRESHOLD = 24
+/** Load at most this many images in parallel to avoid blocking */
+const CONCURRENCY = 8
 
 const mod = (n, m) => ((n % m) + m) % m
 
@@ -38,40 +42,43 @@ const InfiniteGrid = ({ theme }) => {
   const shuffledImages = useMemo(() => shuffleArray(IMAGE_URLS), [])
 
   useEffect(() => {
-    let count = 0
-    const preload = async () => {
-      const promises = shuffledImages.map((url) => {
-        return new Promise((resolve) => {
-          const img = new Image()
-          img.loading = 'eager'
-          
-          img.onload = async () => {
-            try {
-              await img.decode()
-              count++
-              setLoadedCount(count)
-              resolve(img)
-            } catch {
-              count++
-              setLoadedCount(count)
-              resolve(null)
-            }
-          }
-          
-          img.onerror = () => {
-            count++
-            setLoadedCount(count)
-            resolve(null)
-          }
-          
-          img.src = url
-        })
+    let loaded = 0
+    let cancelled = false
+
+    const loadOne = (url) =>
+      new Promise((resolve) => {
+        const img = new Image()
+        img.onload = () => {
+          if (cancelled) return
+          loaded++
+          setLoadedCount(loaded)
+          if (loaded >= READY_THRESHOLD) setIsReady(true)
+          img.decode().catch(() => {}).then(resolve)
+        }
+        img.onerror = () => {
+          if (cancelled) return
+          loaded++
+          setLoadedCount(loaded)
+          if (loaded >= READY_THRESHOLD) setIsReady(true)
+          resolve()
+        }
+        img.src = url
       })
-      
-      await Promise.all(promises)
-      setTimeout(() => setIsReady(true), 100)
+
+    const runBatch = async (start) => {
+      const batch = shuffledImages.slice(start, start + CONCURRENCY)
+      if (batch.length === 0) return
+      await Promise.all(batch.map(loadOne))
+      if (cancelled) return
+      if (start + CONCURRENCY < shuffledImages.length) {
+        await runBatch(start + CONCURRENCY)
+      } else {
+        setIsReady(true)
+      }
     }
-    preload()
+
+    runBatch(0)
+    return () => { cancelled = true }
   }, [shuffledImages])
 
   useEffect(() => {
@@ -206,7 +213,7 @@ const GridItem = memo(({ item, x, y, mouseX, mouseY, gridWidth, gridHeight }) =>
           alt=""
           className="w-full h-full object-cover"
           loading="eager"
-          decoding="sync"
+          decoding="async"
           draggable={false}
         />
       </div>
