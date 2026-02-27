@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
+import { Analytics } from '@vercel/analytics/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MdEmail } from 'react-icons/md'
 import { FaLinkedin, FaGithub, FaXTwitter } from 'react-icons/fa6'
@@ -202,6 +203,7 @@ function App() {
         {/* Visitor Counter - Only visible when ?admin=true in URL */}
         <VisitorCounter theme={theme} />
       </main>
+      <Analytics />
     </motion.div>
   )
 }

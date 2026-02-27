@@ -4,6 +4,17 @@ import { ExternalLink } from 'lucide-react'
 const Projects = ({ theme }) => {
   const projects = [
     {
+      name: "UW GitRank",
+      techStack: [
+        "Next.js",
+        "Supabase",
+        "Prisma",
+        "Tailwind CSS"
+      ],
+      description: "Waterloo student GitHub rankings scored by stars, PRs, commits, and peer endorsements — see who’s making an impact in open source across UW faculties.",
+      github: "https://uwgitrank.com"
+    },
+    {
       name: "3D Renderer",
       techStack: ["Python", "Pygame", "NumPy"],
       description: "An interactive wireframe editor that allows you to construct, manipulate, and rotate 3D mesh structures in real-time through a perspective-accurate workspace.",
@@ -11,7 +22,7 @@ const Projects = ({ theme }) => {
     },
     {
       name: "Personal Website v2",
-      techStack: ["Next.js", "React", "Vite", "Tailwind CSS", "Framer Motion"],
+      techStack: ["React", "Vite", "Tailwind CSS"],
       description: "This one :)",
       github: "https://github.com/donghaxkim/personalwebsitev2"
     },
@@ -23,16 +34,10 @@ const Projects = ({ theme }) => {
     },
     {
       name: "Personal Website v1",
-      techStack: ["React", "Tailwind CSS", "Framer Motion", "Vite"],
+      techStack: ["React", "Tailwind CSS", "Vite"],
       description: "My first website.",
       github: "https://personalwebsitev1-sable.vercel.app/"
     },
-    {
-      name: "Langton's Ant Sim",
-      techStack: ["Python", "NumPy", "Matplotlib"],
-      description: "An interactive cellular automaton simulation that visualizes emergent complexity by tracking multiple autonomous agents.",
-      github: "https://github.com/donghaxkim/LangtonsAnt"
-    }
   ]
 
   return (
