@@ -54,7 +54,7 @@ const Home = ({ theme }) => {
         }`}
       >
         <p>
-          I study <strong className="font-medium">math</strong> at <strong className="font-medium">waterloo</strong> and do <strong className="font-medium">software</strong> stuff. I talk about random shit at <strong className="font-medium">@imdonghakim</strong> on{' '}
+          I study <strong className="font-medium">math</strong> at <strong className="font-medium">waterloo</strong> and do <strong className="font-medium">software</strong> stuff. I talk about random things at <strong className="font-medium">@imdonghakim</strong> on{' '}
           <a
             href="https://instagram.com/imdonghakim"
             target="_blank"
@@ -87,7 +87,7 @@ const Home = ({ theme }) => {
           >
             x
           </a>
-          . Catch me hooping or chilling with my cat <strong className="font-medium">Maui</strong>. Hit me if you wanna build sum cool{' '}
+          . You can catch me hooping in the wild and if not I'm prolly chillin w my cat <strong className="font-medium">Maui</strong>. Hit me if you wanna build sum cool{' '}
           <a
             href="mailto:dongha.kim@uwaterloo.ca"
             className={`font-medium underline ${
