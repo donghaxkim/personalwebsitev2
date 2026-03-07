@@ -11,8 +11,8 @@ const BlogPost = ({ theme }) => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="w-full max-w-2xl mx-auto px-4"
-        style={{ paddingTop: '6rem' }}
+        className="w-full max-w-2xl mx-auto"
+        style={{ paddingTop: '6rem', paddingLeft: '1.5rem', paddingRight: '1.5rem' }}
       >
         <p className={theme === 'dark' ? 'text-white/80' : 'text-black/80'}>Post not found.</p>
         <Link to="/blog" className={`mt-4 inline-block underline ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
@@ -27,8 +27,8 @@ const BlogPost = ({ theme }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="w-full max-w-2xl mx-auto px-4"
-      style={{ paddingTop: '6rem', paddingBottom: '4rem', fontFamily: "'Karla', sans-serif" }}
+      className="w-full max-w-2xl mx-auto"
+      style={{ paddingTop: '6rem', paddingBottom: '4rem', paddingLeft: '1.5rem', paddingRight: '1.5rem', fontFamily: "'Karla', sans-serif" }}
     >
       <Link
         to="/blog"

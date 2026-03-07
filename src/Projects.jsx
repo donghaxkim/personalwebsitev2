@@ -40,8 +40,8 @@ const Projects = ({ theme }) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.5 }}
-      className="w-full max-w-2xl mx-auto h-full overflow-y-auto px-6"
-      style={{ paddingTop: '6rem', paddingBottom: '4rem' }}
+      className="w-full max-w-2xl mx-auto h-full overflow-y-auto"
+      style={{ paddingTop: '6rem', paddingBottom: '4rem', paddingLeft: '1.5rem', paddingRight: '1.5rem' }}
     >
       <h1 
         className="text-6xl md:text-6xl font-semibold tracking-tighter text-left mb-[0.88rem]" 
