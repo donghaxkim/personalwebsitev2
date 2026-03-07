@@ -209,7 +209,13 @@ function App() {
         </Routes>
 
         {/* Spotify Player in bottom-right */}
-        <div className="fixed bottom-4 right-4 z-50 max-w-[320px]">
+        <div
+          className="fixed z-50 w-[min(280px,90vw)] sm:w-[min(320px,90vw)]"
+          style={{
+            bottom: 'max(1rem, env(safe-area-inset-bottom, 1rem))',
+            right: 'max(1rem, env(safe-area-inset-right, 1rem))',
+          }}
+        >
           <SpotifyPlayer theme={theme} />
         </div>
 

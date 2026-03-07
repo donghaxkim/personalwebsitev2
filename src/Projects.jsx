@@ -71,11 +71,11 @@ const Projects = ({ theme }) => {
               <h2 className="text-xl md:text-2xl font-medium" style={{ fontFamily: "'Karla', sans-serif" }}>
                 {project.name}
               </h2>
-              <a 
-                href={project.github} 
-                target="_blank" 
+              <a
+                href={project.github}
+                target="_blank"
                 rel="noopener noreferrer"
-                className="hover:opacity-60 transition-opacity"
+                className="hover:opacity-60 transition-opacity rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-black/30 dark:focus-visible:ring-white/50 dark:focus-visible:ring-offset-[#1e1e1e]"
               >
                 <ExternalLink size={18} strokeWidth={1.5} />
               </a>

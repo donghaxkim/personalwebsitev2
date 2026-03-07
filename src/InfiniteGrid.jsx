@@ -5,12 +5,18 @@ import { useImagePreloader } from './hooks/useImagePreloader'
 const images = import.meta.glob('./public/toWEBP/*.webp', { eager: true, import: 'default' })
 const IMAGE_URLS = Object.values(images)
 
-const CELL_SIZE = 280
-const GAP = 25
-const TOTAL_CELL = CELL_SIZE + GAP
 const SPRING_CONFIG = { damping: 40, stiffness: 200, mass: 0.5 }
 const SCALE_SPRING = { damping: 25, stiffness: 300, mass: 0.2 }
 const TIER1_COUNT = 20
+
+function getGridMetrics(containerSize) {
+  const shortSide = Math.min(containerSize.width, containerSize.height)
+  const cellSize = Math.round(Math.min(320, Math.max(140, shortSide * 0.22)))
+  const gap = Math.max(12, Math.round(cellSize * 0.09))
+  const totalCell = cellSize + gap
+  const hoverRadius = cellSize * 1.25
+  return { cellSize, gap, totalCell, hoverRadius }
+}
 
 const mod = (n, m) => ((n % m) + m) % m
 
@@ -26,6 +32,16 @@ const shuffleArray = (array) => {
 const InfiniteGrid = ({ theme }) => {
   const [containerSize, setContainerSize] = useState({ width: window.innerWidth, height: window.innerHeight })
   const [isDragging, setIsDragging] = useState(false)
+  const [shouldReduceMotion, setShouldReduceMotion] = useState(() =>
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  )
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const handleChange = (e) => setShouldReduceMotion(e.matches)
+    mq.addEventListener('change', handleChange)
+    return () => mq.removeEventListener('change', handleChange)
+  }, [])
 
   const rawX = useMotionValue(0)
   const rawY = useMotionValue(0)
@@ -43,32 +59,35 @@ const InfiniteGrid = ({ theme }) => {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
+  const metrics = useMemo(() => getGridMetrics(containerSize), [containerSize])
+
   const gridConfig = useMemo(() => {
-    const cols = Math.ceil(containerSize.width / TOTAL_CELL) + 4
-    const rows = Math.ceil(containerSize.height / TOTAL_CELL) + 4
+    const { totalCell } = metrics
+    const cols = Math.ceil(containerSize.width / totalCell) + 4
+    const rows = Math.ceil(containerSize.height / totalCell) + 4
     const totalCells = cols * rows
     const items = []
-    
+
     const imagePool = []
     const repetitions = Math.ceil(totalCells / shuffledImages.length)
     for (let i = 0; i < repetitions; i++) {
       imagePool.push(...shuffleArray(shuffledImages))
     }
-    
+
     let poolIndex = 0
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
-        items.push({ 
-          id: `${r}-${c}`, 
-          relX: c - 1, 
+        items.push({
+          id: `${r}-${c}`,
+          relX: c - 1,
           relY: r - 1,
           imgUrl: imagePool[poolIndex % imagePool.length]
         })
         poolIndex++
       }
     }
-    return { items, cols, rows }
-  }, [containerSize, shuffledImages])
+    return { items, cols, rows, ...metrics }
+  }, [containerSize, shuffledImages, metrics])
 
   const onPanStart = useCallback(() => setIsDragging(true), [])
   const onPan = useCallback((_, info) => {
@@ -78,7 +97,8 @@ const InfiniteGrid = ({ theme }) => {
   const onPanEnd = useCallback(() => setIsDragging(false), [])
 
   return (
-    <div 
+    <div
+      aria-hidden="true"
       onMouseMove={(e) => { mouseX.set(e.clientX); mouseY.set(e.clientY) }}
       onTouchMove={(e) => {
         if (e.touches.length > 0) {
@@ -107,8 +127,12 @@ const InfiniteGrid = ({ theme }) => {
             y={y}
             mouseX={mouseX}
             mouseY={mouseY}
-            gridWidth={gridConfig.cols * TOTAL_CELL}
-            gridHeight={gridConfig.rows * TOTAL_CELL}
+            gridWidth={gridConfig.cols * gridConfig.totalCell}
+            gridHeight={gridConfig.rows * gridConfig.totalCell}
+            cellSize={gridConfig.cellSize}
+            totalCell={gridConfig.totalCell}
+            hoverRadius={gridConfig.hoverRadius}
+            reduceMotion={shouldReduceMotion}
           />
         ))}
       </motion.div>
@@ -116,30 +140,32 @@ const InfiniteGrid = ({ theme }) => {
   )
 }
 
-const GridItem = memo(({ item, x, y, mouseX, mouseY, gridWidth, gridHeight }) => {
+const GridItem = memo(({ item, x, y, mouseX, mouseY, gridWidth, gridHeight, cellSize, totalCell, hoverRadius, reduceMotion }) => {
   const [loaded, setLoaded] = useState(false)
-  const tx = useTransform(x, (v) => mod((item.relX * TOTAL_CELL) + v + TOTAL_CELL, gridWidth) - TOTAL_CELL)
-  const ty = useTransform(y, (v) => mod((item.relY * TOTAL_CELL) + v + TOTAL_CELL, gridHeight) - TOTAL_CELL)
+  const tx = useTransform(x, (v) => mod((item.relX * totalCell) + v + totalCell, gridWidth) - totalCell)
+  const ty = useTransform(y, (v) => mod((item.relY * totalCell) + v + totalCell, gridHeight) - totalCell)
 
+  const hoverRadiusSq = hoverRadius * hoverRadius
   const rawScale = useTransform([tx, ty, mouseX, mouseY], ([latestX, latestY, mx, my]) => {
-    const centerX = latestX + CELL_SIZE / 2
-    const centerY = latestY + CELL_SIZE / 2
+    if (reduceMotion) return 1
+    const centerX = latestX + cellSize / 2
+    const centerY = latestY + cellSize / 2
     const distanceSq = (mx - centerX) ** 2 + (my - centerY) ** 2
-    
-    if (distanceSq > 122500) return 1
-    
+
+    if (distanceSq > hoverRadiusSq) return 1
+
     const distance = Math.sqrt(distanceSq)
-    return 1 + (1 - distance / 350) * 0.12
+    return 1 + (1 - distance / hoverRadius) * 0.12
   })
-  
+
   const scale = useSpring(rawScale, SCALE_SPRING)
 
   return (
     <motion.div
       style={{
         position: 'absolute',
-        width: CELL_SIZE,
-        height: CELL_SIZE,
+        width: cellSize,
+        height: cellSize,
         x: tx,
         y: ty,
         scale,
