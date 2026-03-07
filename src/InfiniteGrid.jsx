@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, memo, useRef } from 'react'
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion'
+import { useImagePreloader } from './hooks/useImagePreloader'
 
 const images = import.meta.glob('./public/toWEBP/*.webp', { eager: true, import: 'default' })
 const IMAGE_URLS = Object.values(images)
@@ -9,7 +10,7 @@ const GAP = 25
 const TOTAL_CELL = CELL_SIZE + GAP
 const SPRING_CONFIG = { damping: 40, stiffness: 200, mass: 0.5 }
 const SCALE_SPRING = { damping: 25, stiffness: 300, mass: 0.2 }
-const PRELOAD_CONCURRENCY = 20 // Increased from 6
+const TIER1_COUNT = 20
 
 const mod = (n, m) => ((n % m) + m) % m
 
@@ -24,13 +25,11 @@ const shuffleArray = (array) => {
 
 const InfiniteGrid = ({ theme }) => {
   const [containerSize, setContainerSize] = useState({ width: window.innerWidth, height: window.innerHeight })
-  const [isReady, setIsReady] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
-  const [loadProgress, setLoadProgress] = useState(0)
   const [displayProgress, setDisplayProgress] = useState(0)
   const displayRef = useRef(0)
   const intervalRef = useRef(null)
-  
+
   const rawX = useMotionValue(0)
   const rawY = useMotionValue(0)
   const x = useSpring(rawX, SPRING_CONFIG)
@@ -39,92 +38,34 @@ const InfiniteGrid = ({ theme }) => {
   const mouseY = useMotionValue(0)
 
   const shuffledImages = useMemo(() => shuffleArray(IMAGE_URLS), [])
+  const { tier1Ready, loadedCount, total } = useImagePreloader(shuffledImages, TIER1_COUNT)
+
+  // Progress target: 0-100% for first TIER1_COUNT images, then 100% when tier1Ready
+  const tier1Target = total === 0 ? 0 : (tier1Ready ? 100 : Math.min(100, Math.round((loadedCount / Math.min(TIER1_COUNT, total)) * 100)))
 
   // Animate displayed % upward slowly (so it doesn't jump to 100%)
   useEffect(() => {
     if (intervalRef.current) clearInterval(intervalRef.current)
     intervalRef.current = setInterval(() => {
-      if (displayRef.current >= loadProgress) return
-      displayRef.current = Math.min(displayRef.current + 1, loadProgress)
+      if (displayRef.current >= tier1Target) return
+      displayRef.current = Math.min(displayRef.current + 1, tier1Target)
       setDisplayProgress(displayRef.current)
     }, 180)
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current)
     }
-  }, [loadProgress])
+  }, [tier1Target])
 
-  // Reset displayed progress when starting a new load
   useEffect(() => {
-    if (loadProgress === 0) {
+    if (tier1Target === 0) {
       displayRef.current = 0
       setDisplayProgress(0)
     }
-  }, [loadProgress])
-
-  // Optimized preloading: all at once with higher concurrency
-  useEffect(() => {
-    let cancelled = false
-    const imageCache = new Map()
-    
-    const loadOne = async (url) => {
-      try {
-        // Create image element
-        const img = new Image()
-        img.fetchPriority = 'high' // Prioritize image loading
-        img.decoding = 'async' // Decode off main thread
-        
-        // Create promise that resolves on load
-        const loadPromise = new Promise((resolve, reject) => {
-          img.onload = () => {
-            // Decode the image off the main thread
-            img.decode()
-              .then(() => {
-                imageCache.set(url, img)
-                resolve(true)
-              })
-              .catch(() => resolve(true)) // Still resolve even if decode fails
-          }
-          img.onerror = () => resolve(false) // Don't reject, just mark as failed
-        })
-        
-        // Start loading
-        img.src = url
-        
-        return loadPromise
-      } catch {
-        return false
-      }
+    if (tier1Ready && tier1Target === 100) {
+      displayRef.current = 100
+      setDisplayProgress(100)
     }
-
-    const preloadAll = async () => {
-      const total = shuffledImages.length
-      let loaded = 0
-      
-      // Process in batches for better control
-      for (let i = 0; i < total && !cancelled; i += PRELOAD_CONCURRENCY) {
-        const batch = shuffledImages.slice(i, i + PRELOAD_CONCURRENCY)
-        
-        // Load batch in parallel
-        await Promise.all(batch.map(url => 
-          loadOne(url).then(success => {
-            if (success) loaded++
-            if (!cancelled) {
-              setLoadProgress(Math.round((loaded / total) * 100))
-            }
-          })
-        ))
-      }
-      
-      if (!cancelled) {
-        // Small delay to ensure smooth transition
-        await new Promise(r => setTimeout(r, 100))
-        setIsReady(true)
-      }
-    }
-
-    preloadAll()
-    return () => { cancelled = true }
-  }, [shuffledImages])
+  }, [tier1Target, tier1Ready])
 
   useEffect(() => {
     const handleResize = () => setContainerSize({ width: window.innerWidth, height: window.innerHeight })
@@ -184,8 +125,8 @@ const InfiniteGrid = ({ theme }) => {
         className="absolute inset-0 z-0"
         style={{ 
           cursor: isDragging ? 'grabbing' : 'grab',
-          opacity: isReady ? 1 : 0,
-          pointerEvents: isReady ? 'auto' : 'none',
+          opacity: tier1Ready ? 1 : 0,
+          pointerEvents: tier1Ready ? 'auto' : 'none',
           WebkitUserSelect: 'none',
           touchAction: 'none'
         }}
@@ -205,7 +146,7 @@ const InfiniteGrid = ({ theme }) => {
       </motion.div>
 
       <AnimatePresence>
-        {!isReady && (
+        {!tier1Ready && (
           <motion.div 
             initial={{ opacity: 1 }}
             exit={{ opacity: 0, transition: { duration: 0.3 } }}
