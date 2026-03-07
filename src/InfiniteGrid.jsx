@@ -7,7 +7,7 @@ const IMAGE_URLS = Object.values(images)
 
 const SPRING_CONFIG = { damping: 40, stiffness: 200, mass: 0.5 }
 const SCALE_SPRING = { damping: 25, stiffness: 300, mass: 0.2 }
-const TIER1_COUNT = 20
+const TIER1_COUNT = 40
 
 function getGridMetrics(containerSize) {
   const shortSide = Math.min(containerSize.width, containerSize.height)

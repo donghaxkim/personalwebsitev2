@@ -40,7 +40,7 @@ const Projects = ({ theme }) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.5 }}
-      className="w-full max-w-2xl mx-auto h-full overflow-y-auto px-4"
+      className="w-full max-w-2xl mx-auto h-full overflow-y-auto px-6"
       style={{ paddingTop: '6rem', paddingBottom: '4rem' }}
     >
       <h1 

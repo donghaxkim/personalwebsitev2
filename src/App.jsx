@@ -38,7 +38,7 @@ const Home = ({ theme }) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.5 }}
-      className="w-full max-w-2xl mx-auto"
+      className="w-full max-w-2xl mx-auto px-2"
     >
       <h1 className="text-6xl md:text-6xl font-semibold tracking-tighter text-left -mt-8 md:-mt-12" style={{ fontFamily: "'Gowun Batang', serif", marginBottom: '0.88rem' }}>
         Dongha Kim
@@ -202,7 +202,7 @@ function App() {
         />
 
       {/* Main Content */}
-      <main className="w-full min-h-screen flex items-center justify-center px-6 md:px-8 py-6 pb-24 md:pb-32">
+      <main className="w-full min-h-screen flex items-center justify-center px-8 md:px-8 py-6 pb-24 md:pb-32">
         <Routes>
           <Route path="/" element={<Home theme={theme} />} />
           <Route path="/projects" element={<Projects theme={theme} />} />
@@ -213,7 +213,7 @@ function App() {
 
         {/* Spotify Player in bottom-right */}
         <div
-          className="fixed z-50 w-[min(280px,90vw)] sm:w-[min(320px,90vw)]"
+          className="fixed z-50 w-[min(220px,85vw)] sm:w-[min(320px,90vw)]"
           style={{
             bottom: 'max(1rem, env(safe-area-inset-bottom, 1rem))',
             right: 'max(1rem, env(safe-area-inset-right, 1rem))',

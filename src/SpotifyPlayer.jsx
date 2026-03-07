@@ -59,7 +59,15 @@ export default function SpotifyPlayer({ theme = 'light' }) {
   const [progress, setProgress] = useState(0)
   const [duration, setDuration] = useState(0)
   const [isExpanded, setIsExpanded] = useState(false)
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 640)
   const audioRef = useRef(null)
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 639px)')
+    const handler = (e) => setIsMobile(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
 
   const currentTrack = trackPool[trackIndex]
 
@@ -222,24 +230,24 @@ export default function SpotifyPlayer({ theme = 'light' }) {
       
       <motion.div 
         initial={{ x: 200 }}
-        animate={{ x: isExpanded ? 0 : 180 }}
+        animate={{ x: isExpanded ? 0 : (isMobile ? 150 : 180) }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         onClick={() => setIsExpanded(!isExpanded)}
-        className={`fixed bottom-6 right-6 w-[250px] rounded-[10px] shadow-2xl cursor-pointer overflow-hidden ${
+        className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-full rounded-[10px] shadow-2xl cursor-pointer overflow-hidden ${
           theme === 'dark' 
             ? 'bg-[#2a2a2a] border border-gray-700/30' 
             : 'bg-white border border-gray-200/50'
         }`}
-        style={{ paddingTop: '0.625rem', paddingLeft: '0.625rem', paddingRight: '0.625rem', paddingBottom: '0.625rem' }}
+        style={{ padding: isMobile ? '0.4rem' : '0.625rem' }}
       >
         <motion.div
-          animate={{ height: isExpanded ? 120 : 60 }}
+          animate={{ height: isExpanded ? (isMobile ? 100 : 120) : (isMobile ? 48 : 60) }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
           className="relative"
         >
           {/* Top section - Album art and track info */}
           <div className="relative w-full flex gap-2.5" style={{ marginTop: '0.125rem' }}>
-            <div className="relative top-[5px] left-[5px] h-10 w-10 bg-[#d2d2d2] rounded-[5px] flex justify-center items-center overflow-hidden flex-shrink-0">
+            <div className="relative top-[5px] left-[5px] h-8 w-8 sm:h-10 sm:w-10 bg-[#d2d2d2] rounded-[5px] flex justify-center items-center overflow-hidden flex-shrink-0">
               <img 
                 src={currentTrack.albumArt}
                 alt={currentTrack.title}
@@ -374,7 +382,7 @@ export default function SpotifyPlayer({ theme = 'light' }) {
                   }}
                   className="cursor-pointer transition-colors duration-100 hover:text-[#1db954]"
                 >
-                  <BiSkipPrevious size={24} />
+                  <BiSkipPrevious size={isMobile ? 20 : 24} />
                 </button>
                 
                 <button 
@@ -384,7 +392,7 @@ export default function SpotifyPlayer({ theme = 'light' }) {
                   }}
                   className="cursor-pointer transition-colors duration-100 hover:text-[#1db954]"
                 >
-                  {isPlaying ? <BiPauseCircle size={24} /> : <BiPlayCircle size={24} />}
+                  {isPlaying ? <BiPauseCircle size={isMobile ? 20 : 24} /> : <BiPlayCircle size={isMobile ? 20 : 24} />}
                 </button>
                 
                 <button 
@@ -394,7 +402,7 @@ export default function SpotifyPlayer({ theme = 'light' }) {
                   }}
                   className="cursor-pointer transition-colors duration-100 hover:text-[#1db954]"
                 >
-                  <BiSkipNext size={24} />
+                  <BiSkipNext size={isMobile ? 20 : 24} />
                 </button>
               </motion.div>
             )}

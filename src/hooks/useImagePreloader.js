@@ -15,7 +15,7 @@ function loadImage(url) {
   })
 }
 
-export function useImagePreloader(imageUrls, tier1Count = 20) {
+export function useImagePreloader(imageUrls, tier1Count = 40) {
   const [tier1Ready, setTier1Ready] = useState(false)
   const [loadedCount, setLoadedCount] = useState(0)
   const cancelledRef = useRef(false)
