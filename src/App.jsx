@@ -54,11 +54,7 @@ const Home = ({ theme }) => {
         }`}
       >
         <p>
-          Hi, I'm <strong className="font-medium">DK</strong>, a <strong className="font-medium">Mathematics</strong> student at the <strong className="font-medium">University of Waterloo</strong>. I have a strong interest in <strong className="font-medium">Growth</strong> & <strong className="font-medium">Software Engineering</strong>, and while my studies keep me immersed most of the time, I'm a firm believer that the best growth happens through connection and collaboration.
-        </p>
-        
-        <p>
-          Outside of the classroom, you can find me on the basketball court, catching up with friends, or hanging out with my cat, <strong className="font-medium">Maui</strong>. I also enjoy sharing my perspectives on random things at <strong className="font-medium">@imdonghakim</strong> on both{' '}
+          I study <strong className="font-medium">math</strong> at <strong className="font-medium">waterloo</strong> and do <strong className="font-medium">software</strong> stuff. I talk about random shit at <strong className="font-medium">@imdonghakim</strong> on{' '}
           <a
             href="https://instagram.com/imdonghakim"
             target="_blank"
@@ -67,9 +63,9 @@ const Home = ({ theme }) => {
               theme === 'dark' ? 'text-white hover:text-white/80' : 'text-black hover:text-black/70'
             }`}
           >
-            Instagram
+            instagram
           </a>
-          {' '}and{' '}
+          ,{' '}
           <a
             href="https://tiktok.com/@imdonghakim"
             target="_blank"
@@ -78,13 +74,20 @@ const Home = ({ theme }) => {
               theme === 'dark' ? 'text-white hover:text-white/80' : 'text-black hover:text-black/70'
             }`}
           >
-            TikTok
+            tiktok
           </a>
-          .
-        </p>
-        
-        <p>
-          I'm always excited to meet new people, whether it's to discuss a potential project, an opportunity, or even just to chat. Feel free to reach out{' '}
+          , and{' '}
+          <a
+            href="https://x.com/imdonghakim"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`font-medium underline ${
+              theme === 'dark' ? 'text-white hover:text-white/80' : 'text-black hover:text-black/70'
+            }`}
+          >
+            x
+          </a>
+          . Catch me hooping or chilling with my cat <strong className="font-medium">Maui</strong>. Hit me if you wanna build sum cool{' '}
           <a
             href="mailto:dongha.kim@uwaterloo.ca"
             className={`font-medium underline ${
@@ -93,7 +96,7 @@ const Home = ({ theme }) => {
           >
             here
           </a>
-          !
+          .
         </p>
         
         {/* Social Media Icons */}
