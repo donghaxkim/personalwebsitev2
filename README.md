@@ -130,7 +130,7 @@ Elegant loading experience:
 
 ### **Icons & Assets**
 - **React Icons** - Icon library (bi, fa, md, wi)
-- **WebP Images** - Optimized 81 unique photos
+- **WebP Images** - Optimized 82 unique photos
 - **MP3 Audio** - Real music files
 
 ## 📐 Mathematical Implementations
@@ -237,7 +237,7 @@ portfolio3/
 │   │   └── application/
 │   │       └── loading-indicator/  # Loading spinner
 │   └── public/
-│       ├── toWEBP/           # 81 unique photos
+│       ├── toWEBP/           # 82 unique photos
 │       ├── currents.jpg      # Album art
 │       ├── ea.jpeg
 │       ├── starboy.jpg
@@ -298,7 +298,7 @@ Built with Vite for optimal production builds:
 
 **Design & Development**: Dongha Kim  
 **Built with**: React, Framer Motion, Tailwind CSS  
-**Photography**: Personal collection (81 photos)  
+**Photography**: Personal collection (82 photos)  
 **Music**: Curated playlist with proper audio files
 
 ## 📄 License
