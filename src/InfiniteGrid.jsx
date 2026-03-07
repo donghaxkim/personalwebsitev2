@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo, useCallback, memo, useRef } from 'react'
-import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion'
+import { useState, useEffect, useMemo, useCallback, memo } from 'react'
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { useImagePreloader } from './hooks/useImagePreloader'
 
 const images = import.meta.glob('./public/toWEBP/*.webp', { eager: true, import: 'default' })
@@ -26,9 +26,6 @@ const shuffleArray = (array) => {
 const InfiniteGrid = ({ theme }) => {
   const [containerSize, setContainerSize] = useState({ width: window.innerWidth, height: window.innerHeight })
   const [isDragging, setIsDragging] = useState(false)
-  const [displayProgress, setDisplayProgress] = useState(0)
-  const displayRef = useRef(0)
-  const intervalRef = useRef(null)
 
   const rawX = useMotionValue(0)
   const rawY = useMotionValue(0)
@@ -38,34 +35,7 @@ const InfiniteGrid = ({ theme }) => {
   const mouseY = useMotionValue(0)
 
   const shuffledImages = useMemo(() => shuffleArray(IMAGE_URLS), [])
-  const { tier1Ready, loadedCount, total } = useImagePreloader(shuffledImages, TIER1_COUNT)
-
-  // Progress target: 0-100% for first TIER1_COUNT images, then 100% when tier1Ready
-  const tier1Target = total === 0 ? 0 : (tier1Ready ? 100 : Math.min(100, Math.round((loadedCount / Math.min(TIER1_COUNT, total)) * 100)))
-
-  // Animate displayed % upward slowly (so it doesn't jump to 100%)
-  useEffect(() => {
-    if (intervalRef.current) clearInterval(intervalRef.current)
-    intervalRef.current = setInterval(() => {
-      if (displayRef.current >= tier1Target) return
-      displayRef.current = Math.min(displayRef.current + 1, tier1Target)
-      setDisplayProgress(displayRef.current)
-    }, 180)
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current)
-    }
-  }, [tier1Target])
-
-  useEffect(() => {
-    if (tier1Target === 0) {
-      displayRef.current = 0
-      setDisplayProgress(0)
-    }
-    if (tier1Ready && tier1Target === 100) {
-      displayRef.current = 100
-      setDisplayProgress(100)
-    }
-  }, [tier1Target, tier1Ready])
+  useImagePreloader(shuffledImages, TIER1_COUNT)
 
   useEffect(() => {
     const handleResize = () => setContainerSize({ width: window.innerWidth, height: window.innerHeight })
@@ -125,8 +95,6 @@ const InfiniteGrid = ({ theme }) => {
         className="absolute inset-0 z-0"
         style={{ 
           cursor: isDragging ? 'grabbing' : 'grab',
-          opacity: tier1Ready ? 1 : 0,
-          pointerEvents: tier1Ready ? 'auto' : 'none',
           WebkitUserSelect: 'none',
           touchAction: 'none'
         }}
@@ -144,23 +112,6 @@ const InfiniteGrid = ({ theme }) => {
           />
         ))}
       </motion.div>
-
-      <AnimatePresence>
-        {!tier1Ready && (
-          <motion.div 
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.3 } }}
-            className={`fixed inset-0 z-[100] flex items-center justify-center transition-colors duration-500 ${theme === 'dark' ? 'bg-[#1e1e1e]' : 'bg-white'}`}
-          >
-            <span 
-              className={`text-2xl font-light tabular-nums ${theme === 'dark' ? 'text-white/70' : 'text-black/70'}`}
-              style={{ fontFamily: "'Karla', sans-serif" }}
-            >
-              {displayProgress}%
-            </span>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   )
 }
