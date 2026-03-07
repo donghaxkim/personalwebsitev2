@@ -112,7 +112,8 @@ const InfiniteGrid = ({ theme }) => {
           mouseY.set(e.touches[0].clientY)
         }
       }}
-      className={`w-full h-screen overflow-hidden relative select-none transition-colors duration-500 ${theme === 'dark' ? 'bg-[#1e1e1e]' : 'bg-white'}`}
+      className={`h-screen overflow-hidden relative select-none transition-colors duration-500 ${theme === 'dark' ? 'bg-[#1e1e1e]' : 'bg-white'}`}
+      style={{ marginLeft: '-2.5rem', marginRight: '-2.5rem', width: 'calc(100% + 5rem)' }}
     >
       <motion.div 
         onPanStart={onPanStart}
