@@ -7,12 +7,31 @@ import { FaLinkedin, FaGithub, FaXTwitter } from 'react-icons/fa6'
 import Navbar from './Navbar'
 import SpotifyPlayer from './SpotifyPlayer'
 import Projects from './Projects'
+import Blog from './Blog'
+import BlogPost from './BlogPost'
 import InfiniteGrid from './InfiniteGrid'
-import { Tooltip, TooltipTrigger } from './components/Tooltip'
+import Tooltip from '@mui/material/Tooltip'
 import VisitorCounter from './components/VisitorCounter'
 
 // Home component
 const Home = ({ theme }) => {
+  const tooltipSlotProps = {
+    popper: {
+      sx: {
+        '& .MuiTooltip-tooltip': {
+          fontFamily: "'Karla', sans-serif",
+          bgcolor: theme === 'dark' ? 'rgb(200, 200, 200)' : 'rgb(38, 38, 38)',
+          color: theme === 'dark' ? 'rgb(30, 30, 30)' : 'white',
+          fontSize: '0.8125rem',
+          fontWeight: 500,
+          px: 1.5,
+          py: 1.25,
+          borderRadius: '8px',
+          boxShadow: 'none',
+        },
+      },
+    },
+  }
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -79,65 +98,57 @@ const Home = ({ theme }) => {
         
         {/* Social Media Icons */}
         <div className="flex gap-4 mt-14 select-none">
-          <Tooltip title="Email" placement="bottom" delay={500}>
-            <TooltipTrigger>
-              <a
-                href="mailto:dongha.kim@uwaterloo.ca"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`transition-opacity ${
-                  theme === 'dark' ? 'text-white/60 hover:text-white/90' : 'text-black/60 hover:text-black/90'
-                }`}
-                draggable={false}
-              >
-                <MdEmail size={20} />
-              </a>
-            </TooltipTrigger>
+          <Tooltip title="Email" placement="bottom" enterDelay={500} slotProps={tooltipSlotProps}>
+            <a
+              href="mailto:dongha.kim@uwaterloo.ca"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`transition-opacity ${
+                theme === 'dark' ? 'text-white/60 hover:text-white/90' : 'text-black/60 hover:text-black/90'
+              }`}
+              draggable={false}
+            >
+              <MdEmail size={20} />
+            </a>
           </Tooltip>
-          <Tooltip title="LinkedIn" placement="bottom" delay={500}>
-            <TooltipTrigger>
-              <a
-                href="https://www.linkedin.com/in/dongha-kimm/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`transition-opacity ${
-                  theme === 'dark' ? 'text-white/60 hover:text-white/90' : 'text-black/60 hover:text-black/90'
-                }`}
-                draggable={false}
-              >
-                <FaLinkedin size={20} />
-              </a>
-            </TooltipTrigger>
+          <Tooltip title="LinkedIn" placement="bottom" enterDelay={500} slotProps={tooltipSlotProps}>
+            <a
+              href="https://www.linkedin.com/in/dongha-kimm/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`transition-opacity ${
+                theme === 'dark' ? 'text-white/60 hover:text-white/90' : 'text-black/60 hover:text-black/90'
+              }`}
+              draggable={false}
+            >
+              <FaLinkedin size={20} />
+            </a>
           </Tooltip>
-          <Tooltip title="GitHub" placement="bottom" delay={500}>
-            <TooltipTrigger>
-              <a
-                href="https://github.com/donghaxkim"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`transition-opacity ${
-                  theme === 'dark' ? 'text-white/60 hover:text-white/90' : 'text-black/60 hover:text-black/90'
-                }`}
-                draggable={false}
-              >
-                <FaGithub size={20} />
-              </a>
-            </TooltipTrigger>
+          <Tooltip title="GitHub" placement="bottom" enterDelay={500} slotProps={tooltipSlotProps}>
+            <a
+              href="https://github.com/donghaxkim"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`transition-opacity ${
+                theme === 'dark' ? 'text-white/60 hover:text-white/90' : 'text-black/60 hover:text-black/90'
+              }`}
+              draggable={false}
+            >
+              <FaGithub size={20} />
+            </a>
           </Tooltip>
-          <Tooltip title="X" placement="bottom" delay={500}>
-            <TooltipTrigger>
-              <a
-                href="https://x.com/imdonghakim"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`transition-opacity ${
-                  theme === 'dark' ? 'text-white/60 hover:text-white/90' : 'text-black/60 hover:text-black/90'
-                }`}
-                draggable={false}
-              >
-                <FaXTwitter size={20} />
-              </a>
-            </TooltipTrigger>
+          <Tooltip title="X" placement="bottom" enterDelay={500} slotProps={tooltipSlotProps}>
+            <a
+              href="https://x.com/imdonghakim"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`transition-opacity ${
+                theme === 'dark' ? 'text-white/60 hover:text-white/90' : 'text-black/60 hover:text-black/90'
+              }`}
+              draggable={false}
+            >
+              <FaXTwitter size={20} />
+            </a>
           </Tooltip>
         </div>
       </motion.div>
@@ -192,6 +203,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Home theme={theme} />} />
           <Route path="/projects" element={<Projects theme={theme} />} />
+          <Route path="/blog" element={<Blog theme={theme} />} />
+          <Route path="/blog/:id" element={<BlogPost theme={theme} />} />
           <Route path="/grid" element={<InfiniteGrid theme={theme} />} />
         </Routes>
 

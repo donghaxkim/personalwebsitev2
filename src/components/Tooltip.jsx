@@ -5,7 +5,7 @@ export const Tooltip = ({
     title,
     description,
     children,
-    arrow = false,
+    arrow = true,
     delay = 300,
     closeDelay = 0,
     trigger,
@@ -35,8 +35,8 @@ export const Tooltip = ({
                 {({ isEntering, isExiting }) => (
                     <div
                         className={cx(
-                            "z-50 flex max-w-xs origin-(--trigger-anchor-point) flex-col items-center gap-1 rounded shadow-xl will-change-transform tooltip-box",
-                            description ? "px-4 py-4" : "px-3 py-3",
+                            "z-50 flex max-w-[200px] origin-(--trigger-anchor-point) flex-col items-center gap-0.5 rounded-lg will-change-transform tooltip-box",
+                            description ? "px-4 py-3" : "px-4 py-3",
                             isEntering &&
                                 "ease-out animate-in fade-in zoom-in-95 in-placement-left:slide-in-from-right-0.5 in-placement-right:slide-in-from-left-0.5 in-placement-top:slide-in-from-bottom-0.5 in-placement-bottom:slide-in-from-top-0.5",
                             isExiting &&
@@ -44,31 +44,21 @@ export const Tooltip = ({
                         )}
                         style={{ fontFamily: "'Karla', sans-serif" }}
                     >
-                        <span 
-                            className="text-xs font-bold tooltip-title whitespace-nowrap" 
-                            style={{ 
-                                color: 'rgb(17, 24, 39)',
-                            }}
-                        >
+                        <span className="text-xs font-bold tooltip-title whitespace-nowrap">
                             {title}
                         </span>
                         {description && (
-                            <span 
-                                className="text-xs font-semibold tooltip-description" 
-                                style={{ 
-                                    color: 'rgb(55, 65, 81)',
-                                }}
-                            >
+                            <span className="text-xs font-medium tooltip-description">
                                 {description}
                             </span>
                         )}
                         {arrow && (
                             <AriaOverlayArrow>
                                 <svg
-                                    viewBox="0 0 100 100"
-                                    className="size-2.5 fill-white dark:fill-bg-primary-solid in-placement-left:-rotate-90 in-placement-right:rotate-90 in-placement-top:rotate-0 in-placement-bottom:rotate-180"
+                                    viewBox="0 0 12 6"
+                                    className="size-2 fill-[rgb(38,38,38)] in-placement-left:-rotate-90 in-placement-right:rotate-90 in-placement-top:rotate-0 in-placement-bottom:rotate-180"
                                 >
-                                    <path d="M0,0 L35.858,35.858 Q50,50 64.142,35.858 L100,0 Z" />
+                                    <path d="M0 0 L6 6 L12 0 Z" />
                                 </svg>
                             </AriaOverlayArrow>
                         )}

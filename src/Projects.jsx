@@ -27,12 +27,6 @@ const Projects = ({ theme }) => {
       github: "https://github.com/donghaxkim/personalwebsitev2"
     },
     {
-      name: "Bayesian Blackwell BlackJack Engine",
-      techStack: ["NumPy", "SciPy", "Typing", "Functools", "Pathlib", "Dataclasses"],
-      description: "A quantitative blackjack advisor that uses statistical modeling to provide real-time optimal play recommendations by analyzing shifting shoe probabilities and expected value.",
-      github: "https://github.com/donghaxkim/Bayesian-BlackJack-Engine"
-    },
-    {
       name: "Personal Website v1",
       techStack: ["React", "Tailwind CSS", "Vite"],
       description: "My first website.",
