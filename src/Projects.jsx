@@ -11,7 +11,7 @@ const Projects = ({ theme }) => {
         "Prisma",
         "Tailwind CSS"
       ],
-      description: "Waterloo student GitHub rankings scored by stars, PRs, commits, and peer endorsements — see who’s making an impact in open source across UW faculties.",
+      description: "Waterloo student GitHub rankings scored by stars, PRs, commits, peer endorsements, and pvp repository battles.",
       github: "https://uwgitrank.com"
     },
     {
@@ -21,15 +21,9 @@ const Projects = ({ theme }) => {
       github: "https://github.com/donghaxkim/3DRenderer"
     },
     {
-      name: "Personal Website v2",
-      techStack: ["React", "Vite", "Tailwind CSS"],
-      description: "This one :)",
-      github: "https://github.com/donghaxkim/personalwebsitev2"
-    },
-    {
       name: "Personal Website v1",
       techStack: ["React", "Tailwind CSS", "Vite"],
-      description: "My first website.",
+      description: "Cool first website.",
       github: "https://personalwebsitev1-sable.vercel.app/"
     },
   ]
