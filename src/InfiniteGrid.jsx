@@ -65,25 +65,31 @@ const InfiniteGrid = ({ theme }) => {
     const { totalCell } = metrics
     const cols = Math.ceil(containerSize.width / totalCell) + 4
     const rows = Math.ceil(containerSize.height / totalCell) + 4
-    const totalCells = cols * rows
     const items = []
 
-    const imagePool = []
-    const repetitions = Math.ceil(totalCells / shuffledImages.length)
-    for (let i = 0; i < repetitions; i++) {
-      imagePool.push(...shuffleArray(shuffledImages))
-    }
+    // Constraint-based placement: no duplicate within Chebyshev distance 2 (5×5 neighborhood)
+    const grid = Array.from({ length: rows }, () => new Array(cols).fill(null))
 
-    let poolIndex = 0
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
-        items.push({
-          id: `${r}-${c}`,
-          relX: c - 1,
-          relY: r - 1,
-          imgUrl: imagePool[poolIndex % imagePool.length]
-        })
-        poolIndex++
+        const forbidden = new Set()
+        for (let dr = -2; dr <= 2; dr++) {
+          for (let dc = -2; dc <= 2; dc++) {
+            if (dr === 0 && dc === 0) continue
+            const nr = (r + dr + rows) % rows
+            const nc = (c + dc + cols) % cols
+            if (grid[nr][nc] !== null) forbidden.add(grid[nr][nc])
+          }
+        }
+        const candidates = shuffledImages.filter(img => !forbidden.has(img))
+        const pool = candidates.length > 0 ? candidates : shuffledImages
+        grid[r][c] = pool[Math.floor(Math.random() * pool.length)]
+      }
+    }
+
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        items.push({ id: `${r}-${c}`, relX: c - 1, relY: r - 1, imgUrl: grid[r][c] })
       }
     }
     return { items, cols, rows, ...metrics }
