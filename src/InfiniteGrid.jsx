@@ -102,14 +102,23 @@ const InfiniteGrid = ({ theme }) => {
   }, [rawX, rawY])
   const onPanEnd = useCallback(() => setIsDragging(false), [])
 
+  const handlePointer = useCallback((clientX, clientY) => {
+    mouseX.set(clientX)
+    mouseY.set(clientY)
+  }, [mouseX, mouseY])
+
   return (
     <div
       aria-hidden="true"
-      onMouseMove={(e) => { mouseX.set(e.clientX); mouseY.set(e.clientY) }}
+      onMouseMove={(e) => handlePointer(e.clientX, e.clientY)}
+      onTouchStart={(e) => {
+        if (e.touches.length > 0) {
+          handlePointer(e.touches[0].clientX, e.touches[0].clientY)
+        }
+      }}
       onTouchMove={(e) => {
         if (e.touches.length > 0) {
-          mouseX.set(e.touches[0].clientX)
-          mouseY.set(e.touches[0].clientY)
+          handlePointer(e.touches[0].clientX, e.touches[0].clientY)
         }
       }}
       className={`h-screen overflow-hidden relative select-none transition-colors duration-500 ${theme === 'dark' ? 'bg-[#1e1e1e]' : 'bg-white'}`}
