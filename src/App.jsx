@@ -87,9 +87,9 @@ const Home = ({ theme }) => {
           >
             x
           </a>
-          . You can catch me hooping in the wild and if not I'm prolly chillin w my cat Maui. Reach me{' '}
+          . I like playing basketball and hanging out with my cat. Email me if you wanna make something cool{' '}
           <a
-            href="mailto:dongha.kim@uwaterloo.ca"
+            href="mailto:d396kim@uwaterloo.ca"
             className={`font-medium underline ${
               theme === 'dark' ? 'text-white hover:text-white/80' : 'text-black hover:text-black/70'
             }`}
@@ -103,7 +103,7 @@ const Home = ({ theme }) => {
         <div className="flex gap-4 mt-14 select-none">
           <Tooltip title="Email" placement="bottom" enterDelay={500} slotProps={tooltipSlotProps}>
             <a
-              href="mailto:dongha.kim@uwaterloo.ca"
+              href="mailto:d396kim@uwaterloo.ca"
               target="_blank"
               rel="noopener noreferrer"
               className={`transition-opacity ${
@@ -116,7 +116,7 @@ const Home = ({ theme }) => {
           </Tooltip>
           <Tooltip title="LinkedIn" placement="bottom" enterDelay={500} slotProps={tooltipSlotProps}>
             <a
-              href="https://www.linkedin.com/in/dongha-kimm/"
+              href="https://www.linkedin.com/in/donghaxkim/"
               target="_blank"
               rel="noopener noreferrer"
               className={`transition-opacity ${
