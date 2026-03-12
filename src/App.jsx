@@ -43,14 +43,15 @@ const Home = ({ theme }) => {
       <h1 className="text-6xl md:text-6xl font-semibold tracking-tighter text-left -mt-8 md:-mt-12" style={{ fontFamily: "'Gowun Batang', serif", marginBottom: '0.88rem' }}>
         Dongha Kim
       </h1>
-
+      
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
         style={{ fontFamily: "'Karla', sans-serif" }}
-        className={`space-y-6 md:space-y-8 text-sm md:text-base font-light leading-loose ${theme === 'dark' ? 'text-white/80' : 'text-black/80'
-          }`}
+        className={`space-y-6 md:space-y-8 text-sm md:text-base font-light leading-loose ${
+          theme === 'dark' ? 'text-white/80' : 'text-black/80'
+        }`}
       >
         <p>
           I study <strong className="font-medium">math</strong> at <strong className="font-medium">waterloo</strong> and do <strong className="font-medium">software</strong> stuff. I talk about random things at <strong className="font-medium">@imdonghakim</strong> on{' '}
@@ -58,8 +59,9 @@ const Home = ({ theme }) => {
             href="https://instagram.com/imdonghakim"
             target="_blank"
             rel="noopener noreferrer"
-            className={`font-medium underline ${theme === 'dark' ? 'text-white hover:text-white/80' : 'text-black hover:text-black/70'
-              }`}
+            className={`font-medium underline ${
+              theme === 'dark' ? 'text-white hover:text-white/80' : 'text-black hover:text-black/70'
+            }`}
           >
             instagram
           </a>
@@ -68,8 +70,9 @@ const Home = ({ theme }) => {
             href="https://tiktok.com/@imdonghakim"
             target="_blank"
             rel="noopener noreferrer"
-            className={`font-medium underline ${theme === 'dark' ? 'text-white hover:text-white/80' : 'text-black hover:text-black/70'
-              }`}
+            className={`font-medium underline ${
+              theme === 'dark' ? 'text-white hover:text-white/80' : 'text-black hover:text-black/70'
+            }`}
           >
             tiktok
           </a>
@@ -78,22 +81,24 @@ const Home = ({ theme }) => {
             href="https://x.com/imdonghakim"
             target="_blank"
             rel="noopener noreferrer"
-            className={`font-medium underline ${theme === 'dark' ? 'text-white hover:text-white/80' : 'text-black hover:text-black/70'
-              }`}
+            className={`font-medium underline ${
+              theme === 'dark' ? 'text-white hover:text-white/80' : 'text-black hover:text-black/70'
+            }`}
           >
             x
           </a>
-          . I like playing basketball and hanging out with my cat. Reach me{' '}
+          . You can catch me hooping in the wild and if not I'm prolly chillin w my cat Maui. Reach me{' '}
           <a
             href="mailto:dongha.kim@uwaterloo.ca"
-            className={`font-medium underline ${theme === 'dark' ? 'text-white hover:text-white/80' : 'text-black hover:text-black/70'
-              }`}
+            className={`font-medium underline ${
+              theme === 'dark' ? 'text-white hover:text-white/80' : 'text-black hover:text-black/70'
+            }`}
           >
             here
           </a>
           .
         </p>
-
+        
         {/* Social Media Icons */}
         <div className="flex gap-4 mt-14 select-none">
           <Tooltip title="Email" placement="bottom" enterDelay={500} slotProps={tooltipSlotProps}>
@@ -101,8 +106,9 @@ const Home = ({ theme }) => {
               href="mailto:dongha.kim@uwaterloo.ca"
               target="_blank"
               rel="noopener noreferrer"
-              className={`transition-opacity ${theme === 'dark' ? 'text-white/60 hover:text-white/90' : 'text-black/60 hover:text-black/90'
-                }`}
+              className={`transition-opacity ${
+                theme === 'dark' ? 'text-white/60 hover:text-white/90' : 'text-black/60 hover:text-black/90'
+              }`}
               draggable={false}
             >
               <MdEmail size={20} />
@@ -113,8 +119,9 @@ const Home = ({ theme }) => {
               href="https://www.linkedin.com/in/dongha-kimm/"
               target="_blank"
               rel="noopener noreferrer"
-              className={`transition-opacity ${theme === 'dark' ? 'text-white/60 hover:text-white/90' : 'text-black/60 hover:text-black/90'
-                }`}
+              className={`transition-opacity ${
+                theme === 'dark' ? 'text-white/60 hover:text-white/90' : 'text-black/60 hover:text-black/90'
+              }`}
               draggable={false}
             >
               <FaLinkedin size={20} />
@@ -125,8 +132,9 @@ const Home = ({ theme }) => {
               href="https://github.com/donghaxkim"
               target="_blank"
               rel="noopener noreferrer"
-              className={`transition-opacity ${theme === 'dark' ? 'text-white/60 hover:text-white/90' : 'text-black/60 hover:text-black/90'
-                }`}
+              className={`transition-opacity ${
+                theme === 'dark' ? 'text-white/60 hover:text-white/90' : 'text-black/60 hover:text-black/90'
+              }`}
               draggable={false}
             >
               <FaGithub size={20} />
@@ -137,8 +145,9 @@ const Home = ({ theme }) => {
               href="https://x.com/imdonghakim"
               target="_blank"
               rel="noopener noreferrer"
-              className={`transition-opacity ${theme === 'dark' ? 'text-white/60 hover:text-white/90' : 'text-black/60 hover:text-black/90'
-                }`}
+              className={`transition-opacity ${
+                theme === 'dark' ? 'text-white/60 hover:text-white/90' : 'text-black/60 hover:text-black/90'
+              }`}
               draggable={false}
             >
               <FaXTwitter size={20} />
@@ -179,17 +188,18 @@ function App() {
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className={`min-h-screen flex transition-colors duration-500 ${theme === 'dark' ? 'bg-[#1e1e1e] text-white' : 'bg-white text-black'
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className={`min-h-screen flex transition-colors duration-500 ${
+          theme === 'dark' ? 'bg-[#1e1e1e] text-white' : 'bg-white text-black'
         }`}
-    >
-      {/* Navbar */}
-      <Navbar
-        theme={theme}
-        toggleTheme={toggleTheme}
-      />
+      >
+        {/* Navbar */}
+        <Navbar 
+          theme={theme}
+          toggleTheme={toggleTheme}
+        />
 
       {/* Main Content */}
       <main className="w-full min-h-screen flex items-center justify-center py-6 pb-24 md:pb-32" style={{ paddingLeft: '2.5rem', paddingRight: '2.5rem' }}>
