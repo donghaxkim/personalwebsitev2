@@ -1,12 +1,12 @@
-import { useState, useEffect, useMemo, useCallback, memo } from 'react'
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { useState, useEffect, useMemo, useCallback, useRef, memo } from 'react'
 import { useImagePreloader } from './hooks/useImagePreloader'
 
 const images = import.meta.glob('./public/toWEBP/*.webp', { eager: true, import: 'default' })
 const IMAGE_URLS = Object.values(images)
 
-const SPRING_CONFIG = { damping: 40, stiffness: 200, mass: 0.5 }
-const SCALE_SPRING = { damping: 25, stiffness: 300, mass: 0.2 }
+const LERP_FACTOR = 0.12
+const SCALE_LERP = 0.15
+const HOVER_SCALE_AMOUNT = 0.12
 const TIER1_COUNT = 40
 
 function getGridMetrics(containerSize) {
@@ -29,26 +29,32 @@ const shuffleArray = (array) => {
   return shuffled
 }
 
+const isTouchDevice = () =>
+  typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0)
+
 const InfiniteGrid = ({ theme }) => {
   const [containerSize, setContainerSize] = useState({ width: window.innerWidth, height: window.innerHeight })
   const [isDragging, setIsDragging] = useState(false)
-  const [shouldReduceMotion, setShouldReduceMotion] = useState(() =>
-    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  )
 
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const handleChange = (e) => setShouldReduceMotion(e.matches)
-    mq.addEventListener('change', handleChange)
-    return () => mq.removeEventListener('change', handleChange)
-  }, [])
+  const containerRef = useRef(null)
+  const itemRefs = useRef({})
+  const rafId = useRef(null)
 
-  const rawX = useMotionValue(0)
-  const rawY = useMotionValue(0)
-  const x = useSpring(rawX, SPRING_CONFIG)
-  const y = useSpring(rawY, SPRING_CONFIG)
-  const mouseX = useMotionValue(0)
-  const mouseY = useMotionValue(0)
+  // Pan state (target = where user dragged to, current = lerped display value)
+  const panTarget = useRef({ x: 0, y: 0 })
+  const panCurrent = useRef({ x: 0, y: 0 })
+
+  // Momentum state
+  const velocity = useRef({ x: 0, y: 0 })
+  const lastPanDelta = useRef({ x: 0, y: 0 })
+  const isDraggingRef = useRef(false)
+
+  // Mouse state for hover scale (desktop only)
+  const mousePos = useRef({ x: -9999, y: -9999 })
+  const isTouch = useRef(isTouchDevice())
+
+  // Per-item current scale for lerping
+  const itemScales = useRef({})
 
   const shuffledImages = useMemo(() => shuffleArray(IMAGE_URLS), [])
   useImagePreloader(shuffledImages, TIER1_COUNT)
@@ -67,7 +73,6 @@ const InfiniteGrid = ({ theme }) => {
     const rows = Math.ceil(containerSize.height / totalCell) + 4
     const items = []
 
-    // Constraint-based placement: no duplicate within Chebyshev distance 2 (5×5 neighborhood)
     const grid = Array.from({ length: rows }, () => new Array(cols).fill(null))
 
     for (let r = 0; r < rows; r++) {
@@ -95,98 +100,165 @@ const InfiniteGrid = ({ theme }) => {
     return { items, cols, rows, ...metrics }
   }, [containerSize, shuffledImages, metrics])
 
-  const onPanStart = useCallback(() => setIsDragging(true), [])
-  const onPan = useCallback((_, info) => {
-    rawX.set(rawX.get() + info.delta.x)
-    rawY.set(rawY.get() + info.delta.y)
-  }, [rawX, rawY])
-  const onPanEnd = useCallback(() => setIsDragging(false), [])
+  // --- Single RAF loop: position + hover scale ---
+  useEffect(() => {
+    const { items, cols, rows, totalCell, cellSize, hoverRadius } = gridConfig
+    const gridWidth = cols * totalCell
+    const gridHeight = rows * totalCell
+    const hoverRadiusSq = hoverRadius * hoverRadius
+    const enableHover = !isTouch.current
 
-  const handlePointer = useCallback((clientX, clientY) => {
-    mouseX.set(clientX)
-    mouseY.set(clientY)
-  }, [mouseX, mouseY])
+    const tick = () => {
+      // Apply momentum when not dragging
+      if (!isDraggingRef.current) {
+        panTarget.current.x += velocity.current.x
+        panTarget.current.y += velocity.current.y
+        // Friction
+        velocity.current.x *= 0.95
+        velocity.current.y *= 0.95
+        if (Math.abs(velocity.current.x) < 0.1) velocity.current.x = 0
+        if (Math.abs(velocity.current.y) < 0.1) velocity.current.y = 0
+      }
+
+      // Lerp current toward target
+      panCurrent.current.x += (panTarget.current.x - panCurrent.current.x) * LERP_FACTOR
+      panCurrent.current.y += (panTarget.current.y - panCurrent.current.y) * LERP_FACTOR
+
+      const cx = panCurrent.current.x
+      const cy = panCurrent.current.y
+      const mx = mousePos.current.x
+      const my = mousePos.current.y
+
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i]
+        const el = itemRefs.current[item.id]
+        if (!el) continue
+
+        // Wrapping position
+        const px = mod((item.relX * totalCell) + cx + totalCell, gridWidth) - totalCell
+        const py = mod((item.relY * totalCell) + cy + totalCell, gridHeight) - totalCell
+
+        // Hover scale (desktop only)
+        let targetScale = 1
+        if (enableHover) {
+          const centerX = px + cellSize / 2
+          const centerY = py + cellSize / 2
+          const distSq = (mx - centerX) ** 2 + (my - centerY) ** 2
+          if (distSq < hoverRadiusSq) {
+            const dist = Math.sqrt(distSq)
+            targetScale = 1 + (1 - dist / hoverRadius) * HOVER_SCALE_AMOUNT
+          }
+        }
+
+        // Lerp scale
+        const prevScale = itemScales.current[item.id] ?? 1
+        const newScale = prevScale + (targetScale - prevScale) * SCALE_LERP
+        itemScales.current[item.id] = newScale
+
+        el.style.transform = `translate3d(${px}px, ${py}px, 0) scale(${newScale})`
+      }
+
+      rafId.current = requestAnimationFrame(tick)
+    }
+
+    rafId.current = requestAnimationFrame(tick)
+    return () => {
+      if (rafId.current) cancelAnimationFrame(rafId.current)
+    }
+  }, [gridConfig])
+
+  // --- Pointer/touch handlers ---
+  const pointerStart = useRef({ x: 0, y: 0 })
+
+  const handlePointerDown = useCallback((e) => {
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY
+    pointerStart.current = { x: clientX, y: clientY }
+    isDraggingRef.current = true
+    velocity.current = { x: 0, y: 0 }
+    setIsDragging(true)
+  }, [])
+
+  const handlePointerMove = useCallback((e) => {
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY
+
+    // Update mouse position for hover (desktop)
+    if (!e.touches) {
+      mousePos.current = { x: clientX, y: clientY }
+    }
+
+    if (!isDraggingRef.current) return
+
+    const dx = clientX - pointerStart.current.x
+    const dy = clientY - pointerStart.current.y
+    pointerStart.current = { x: clientX, y: clientY }
+
+    panTarget.current.x += dx
+    panTarget.current.y += dy
+    lastPanDelta.current = { x: dx, y: dy }
+  }, [])
+
+  const handlePointerUp = useCallback(() => {
+    isDraggingRef.current = false
+    setIsDragging(false)
+    // Transfer last drag delta as initial velocity for momentum
+    velocity.current = { x: lastPanDelta.current.x * 2, y: lastPanDelta.current.y * 2 }
+    lastPanDelta.current = { x: 0, y: 0 }
+  }, [])
+
+  // Register ref callback
+  const setItemRef = useCallback((id, el) => {
+    if (el) {
+      itemRefs.current[id] = el
+    }
+  }, [])
 
   return (
     <div
+      ref={containerRef}
       aria-hidden="true"
-      onMouseMove={(e) => handlePointer(e.clientX, e.clientY)}
-      onTouchStart={(e) => {
-        if (e.touches.length > 0) {
-          handlePointer(e.touches[0].clientX, e.touches[0].clientY)
-        }
-      }}
-      onTouchMove={(e) => {
-        if (e.touches.length > 0) {
-          handlePointer(e.touches[0].clientX, e.touches[0].clientY)
-        }
-      }}
+      onMouseDown={handlePointerDown}
+      onMouseMove={handlePointerMove}
+      onMouseUp={handlePointerUp}
+      onMouseLeave={handlePointerUp}
+      onTouchStart={handlePointerDown}
+      onTouchMove={handlePointerMove}
+      onTouchEnd={handlePointerUp}
       className={`h-screen overflow-hidden relative select-none transition-colors duration-500 ${theme === 'dark' ? 'bg-[#1e1e1e]' : 'bg-white'}`}
-      style={{ marginLeft: '-2.5rem', marginRight: '-2.5rem', width: 'calc(100% + 5rem)' }}
+      style={{
+        marginLeft: '-2.5rem',
+        marginRight: '-2.5rem',
+        width: 'calc(100% + 5rem)',
+        cursor: isDragging ? 'grabbing' : 'grab',
+        touchAction: 'none',
+      }}
     >
-      <motion.div 
-        onPanStart={onPanStart}
-        onPan={onPan}
-        onPanEnd={onPanEnd}
-        className="absolute inset-0 z-0"
-        style={{ 
-          cursor: isDragging ? 'grabbing' : 'grab',
-          WebkitUserSelect: 'none',
-          touchAction: 'none'
-        }}
-      >
-        {gridConfig.items.map((item) => (
-          <GridItem
-            key={item.id}
-            item={item}
-            x={x}
-            y={y}
-            mouseX={mouseX}
-            mouseY={mouseY}
-            gridWidth={gridConfig.cols * gridConfig.totalCell}
-            gridHeight={gridConfig.rows * gridConfig.totalCell}
-            cellSize={gridConfig.cellSize}
-            totalCell={gridConfig.totalCell}
-            hoverRadius={gridConfig.hoverRadius}
-            reduceMotion={shouldReduceMotion}
-          />
-        ))}
-      </motion.div>
+      {gridConfig.items.map((item) => (
+        <GridItem
+          key={item.id}
+          item={item}
+          cellSize={gridConfig.cellSize}
+          setItemRef={setItemRef}
+        />
+      ))}
     </div>
   )
 }
 
-const GridItem = memo(({ item, x, y, mouseX, mouseY, gridWidth, gridHeight, cellSize, totalCell, hoverRadius, reduceMotion }) => {
+const GridItem = memo(({ item, cellSize, setItemRef }) => {
   const [loaded, setLoaded] = useState(false)
-  const tx = useTransform(x, (v) => mod((item.relX * totalCell) + v + totalCell, gridWidth) - totalCell)
-  const ty = useTransform(y, (v) => mod((item.relY * totalCell) + v + totalCell, gridHeight) - totalCell)
-
-  const hoverRadiusSq = hoverRadius * hoverRadius
-  const rawScale = useTransform([tx, ty, mouseX, mouseY], ([latestX, latestY, mx, my]) => {
-    if (reduceMotion) return 1
-    const centerX = latestX + cellSize / 2
-    const centerY = latestY + cellSize / 2
-    const distanceSq = (mx - centerX) ** 2 + (my - centerY) ** 2
-
-    if (distanceSq > hoverRadiusSq) return 1
-
-    const distance = Math.sqrt(distanceSq)
-    return 1 + (1 - distance / hoverRadius) * 0.12
-  })
-
-  const scale = useSpring(rawScale, SCALE_SPRING)
+  const refCb = useCallback((el) => setItemRef(item.id, el), [item.id, setItemRef])
 
   return (
-    <motion.div
+    <div
+      ref={refCb}
       style={{
         position: 'absolute',
         width: cellSize,
         height: cellSize,
-        x: tx,
-        y: ty,
-        scale,
         willChange: 'transform',
-        transformTemplate: ({ x, y, scale }) => `translate3d(${x}, ${y}, 0) scale(${scale})`,
+        transform: 'translate3d(0, 0, 0) scale(1)',
       }}
       className="pointer-events-none"
     >
@@ -201,10 +273,10 @@ const GridItem = memo(({ item, x, y, mouseX, mouseY, gridWidth, gridHeight, cell
           onLoad={() => setLoaded(true)}
         />
       </div>
-    </motion.div>
+    </div>
   )
-}, (prevProps, nextProps) => 
-  prevProps.item.id === nextProps.item.id
+}, (prevProps, nextProps) =>
+  prevProps.item.id === nextProps.item.id && prevProps.cellSize === nextProps.cellSize
 )
 
 export default InfiniteGrid
