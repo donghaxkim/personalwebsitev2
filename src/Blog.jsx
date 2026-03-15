@@ -54,11 +54,12 @@ const Blog = ({ theme }) => {
               {item.techStack.map((tech) => (
                 <span
                   key={tech}
-                  className={`px-3 py-1 text-xs md:text-sm rounded-full font-light ${
+                  className={`text-xs md:text-sm rounded-full font-light ${
                     theme === 'dark'
                       ? 'bg-white/10 text-white/70'
                       : 'bg-black/5 text-black/70'
                   }`}
+                  style={{ padding: '2.8px 3px' }}
                 >
                   {tech}
                 </span>

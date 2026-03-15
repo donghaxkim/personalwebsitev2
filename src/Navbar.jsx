@@ -35,11 +35,11 @@ const Navbar = ({ theme, toggleTheme }) => {
         className="fixed left-1/2 transform -translate-x-1/2 z-50"
         style={{ top: 'max(1rem, env(safe-area-inset-top, 1rem))' }}
       >
-        <div className={`h-14 sm:h-[72px] rounded-full w-[calc(100vw-2rem)] max-w-[520px] px-4 sm:px-8 flex items-center justify-between text-xl sm:text-2xl ${glassClass} ${iconColor} backdrop-blur-3xl select-none`}>
+        <div className={`h-11 sm:h-14 rounded-full w-[calc(100vw-2rem)] max-w-[520px] px-4 sm:px-8 flex items-center justify-between text-lg sm:text-xl ${glassClass} ${iconColor} backdrop-blur-3xl select-none`}>
             <Tooltip title="home" placement="top" enterDelay={500} slotProps={tooltipSlotProps}>
               <RouterLink
                 to="/"
-                className={`cursor-pointer w-10 h-10 sm:w-14 sm:h-14 flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${theme === 'dark' ? 'focus-visible:ring-white/50 focus-visible:ring-offset-[#1e1e1e]' : 'focus-visible:ring-black/30 focus-visible:ring-offset-white'} ${iconHover} transition-all duration-200`}
+                className={`cursor-pointer w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${theme === 'dark' ? 'focus-visible:ring-white/50 focus-visible:ring-offset-[#1e1e1e]' : 'focus-visible:ring-black/30 focus-visible:ring-offset-white'} ${iconHover} transition-all duration-200`}
                 draggable={false}
               >
                 <BiHomeAlt />
@@ -49,7 +49,7 @@ const Navbar = ({ theme, toggleTheme }) => {
             <Tooltip title="projects" placement="top" enterDelay={500} slotProps={tooltipSlotProps}>
               <RouterLink
                 to="/projects"
-                className={`cursor-pointer w-10 h-10 sm:w-14 sm:h-14 flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${theme === 'dark' ? 'focus-visible:ring-white/50 focus-visible:ring-offset-[#1e1e1e]' : 'focus-visible:ring-black/30 focus-visible:ring-offset-white'} ${iconHover} transition-all duration-200`}
+                className={`cursor-pointer w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${theme === 'dark' ? 'focus-visible:ring-white/50 focus-visible:ring-offset-[#1e1e1e]' : 'focus-visible:ring-black/30 focus-visible:ring-offset-white'} ${iconHover} transition-all duration-200`}
                 draggable={false}
               >
                 <FaCubes />
@@ -59,7 +59,7 @@ const Navbar = ({ theme, toggleTheme }) => {
             <Tooltip title="blog" placement="top" enterDelay={500} slotProps={tooltipSlotProps}>
               <RouterLink
                 to="/blog"
-                className={`cursor-pointer w-10 h-10 sm:w-14 sm:h-14 flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${theme === 'dark' ? 'focus-visible:ring-white/50 focus-visible:ring-offset-[#1e1e1e]' : 'focus-visible:ring-black/30 focus-visible:ring-offset-white'} ${iconHover} transition-all duration-200`}
+                className={`cursor-pointer w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${theme === 'dark' ? 'focus-visible:ring-white/50 focus-visible:ring-offset-[#1e1e1e]' : 'focus-visible:ring-black/30 focus-visible:ring-offset-white'} ${iconHover} transition-all duration-200`}
                 draggable={false}
               >
                 <LuNotebookPen />
@@ -69,7 +69,7 @@ const Navbar = ({ theme, toggleTheme }) => {
             <Tooltip title="gallery" placement="top" enterDelay={500} slotProps={tooltipSlotProps}>
               <RouterLink
                 to="/grid"
-                className={`cursor-pointer w-10 h-10 sm:w-14 sm:h-14 flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${theme === 'dark' ? 'focus-visible:ring-white/50 focus-visible:ring-offset-[#1e1e1e]' : 'focus-visible:ring-black/30 focus-visible:ring-offset-white'} ${iconHover} transition-all duration-200`}
+                className={`cursor-pointer w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${theme === 'dark' ? 'focus-visible:ring-white/50 focus-visible:ring-offset-[#1e1e1e]' : 'focus-visible:ring-black/30 focus-visible:ring-offset-white'} ${iconHover} transition-all duration-200`}
                 draggable={false}
               >
                 <IoMdPhotos />
@@ -78,7 +78,7 @@ const Navbar = ({ theme, toggleTheme }) => {
 
             <Tooltip title={theme === 'dark' ? 'light mode' : 'dark mode'} placement="top" enterDelay={500} slotProps={tooltipSlotProps}>
               <div
-                className={`cursor-pointer w-10 h-10 sm:w-14 sm:h-14 flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${theme === 'dark' ? 'focus-visible:ring-white/50 focus-visible:ring-offset-[#1e1e1e]' : 'focus-visible:ring-black/30 focus-visible:ring-offset-white'} ${iconHover} transition-all duration-200`}
+                className={`cursor-pointer w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${theme === 'dark' ? 'focus-visible:ring-white/50 focus-visible:ring-offset-[#1e1e1e]' : 'focus-visible:ring-black/30 focus-visible:ring-offset-white'} ${iconHover} transition-all duration-200`}
                 onClick={toggleTheme}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleTheme(); } }}
                 role="button"

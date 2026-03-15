@@ -7,6 +7,10 @@ const IMAGE_URLS = Object.values(images)
 const LERP_FACTOR = 0.12
 const SCALE_LERP = 0.15
 const HOVER_SCALE_AMOUNT = 0.12
+// Acceleration curve: slow drags stay precise, fast drags get amplified
+const ACCEL_THRESHOLD = 6   // deltas below this pass through ~1:1
+const ACCEL_MULTIPLIER = 1.8 // how much to amplify fast drags
+const MAX_DRAG_DELTA = 40    // hard cap after acceleration
 const TIER1_COUNT = 40
 
 function getGridMetrics(containerSize) {
@@ -190,9 +194,22 @@ const InfiniteGrid = ({ theme }) => {
 
     if (!isDraggingRef.current) return
 
-    const dx = clientX - pointerStart.current.x
-    const dy = clientY - pointerStart.current.y
+    const rawDx = clientX - pointerStart.current.x
+    const rawDy = clientY - pointerStart.current.y
     pointerStart.current = { x: clientX, y: clientY }
+
+    const accelerate = (d) => {
+      const abs = Math.abs(d)
+      const sign = Math.sign(d)
+      // Below threshold: 1:1, above: amplify the excess
+      const accel = abs <= ACCEL_THRESHOLD
+        ? abs
+        : ACCEL_THRESHOLD + (abs - ACCEL_THRESHOLD) * ACCEL_MULTIPLIER
+      return sign * Math.min(accel, MAX_DRAG_DELTA)
+    }
+
+    const dx = accelerate(rawDx)
+    const dy = accelerate(rawDy)
 
     panTarget.current.x += dx
     panTarget.current.y += dy
@@ -202,8 +219,8 @@ const InfiniteGrid = ({ theme }) => {
   const handlePointerUp = useCallback(() => {
     isDraggingRef.current = false
     setIsDragging(false)
-    // Transfer last drag delta as initial velocity for momentum
-    velocity.current = { x: lastPanDelta.current.x * 2, y: lastPanDelta.current.y * 2 }
+    // Gentle coast in the drag direction
+    velocity.current = { x: lastPanDelta.current.x * 0.5, y: lastPanDelta.current.y * 0.5 }
     lastPanDelta.current = { x: 0, y: 0 }
   }, [])
 
