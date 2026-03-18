@@ -10,10 +10,17 @@ Make the abstract difference between RNNs and Transformers viscerally obvious �
 
 ## Component
 
-**File:** `src/components/blog/RnnVsTransformer.jsx`
+**File:** `src/components/RnnVsTransformer.jsx` (flat in `src/components/`, matching existing convention)
 
 **Props:**
 - `theme` — `'dark' | 'light'` — inherited from blog, controls all styling
+
+**MDX integration:** Register the component in `BlogPost.jsx`'s `mdxComponents` object so it is available in MDX without an import. This also lets us inject the `theme` prop automatically:
+
+```js
+// In BlogPost.jsx, add to the mdxComponents object:
+RnnVsTransformer: (props) => <RnnVsTransformer {...props} theme={theme} />,
+```
 
 **MDX usage:**
 ```mdx
@@ -21,16 +28,16 @@ Make the abstract difference between RNNs and Transformers viscerally obvious �
 
 before transformers, language models used recurrent neural networks...
 
-<RnnVsTransformer theme={theme} />
+<RnnVsTransformer />
 
 transformers throw out sequential processing entirely...
 ```
 
-The component is passed to MDX via the `components` prop in `BlogPost.jsx`.
+The MDX file uses `<RnnVsTransformer />` with no props — `theme` is injected by `BlogPost.jsx` via the component override.
 
 ## Layout
 
-A contained card within the `32rem` blog content column:
+A contained card within the blog content column (`36rem` max-width article, ~31.5rem usable after padding):
 - Subtle border (`1px solid`, low opacity)
 - Slight background tint (white/black at ~2% opacity depending on theme)
 - `12px` border radius
@@ -59,6 +66,8 @@ Segmented control with two options: "RNN" and "Transformer."
 - Triangle play icon centered inside
 - Pressing play runs the animation for the currently selected mode
 - If animation is already playing, pressing resets and replays
+- After animation completes, pressing play replays from the beginning
+- Button has `aria-label="Play animation"`
 
 ## Sentence
 
@@ -91,7 +100,7 @@ All at once (single ~300ms transition):
 
 ## Connection Lines (Transformer mode only)
 
-SVG overlay positioned absolutely over the sentence area.
+SVG overlay positioned absolutely over the sentence area. Each word pill gets a ref; line endpoints are calculated from pill center positions using `getBoundingClientRect` relative to the SVG container. Lines anchor to the horizontal center of each pill.
 
 Line types by relationship strength:
 - **Strong** (cat↔sat, sat↔mat): `1.5px` stroke, ~20% opacity
@@ -131,7 +140,7 @@ All colors use the blog's existing pattern:
 Framer Motion (already installed). Specifically:
 - `motion.div` with `animate` prop for word opacity/weight transitions
 - `motion.line` / `motion.path` for SVG connection line fade-in
-- `stagger` for RNN sequential highlighting
+- `staggerChildren` in parent variants for RNN sequential highlighting
 - `useAnimate` or state-driven variants for play/reset control
 
 ## Responsive Behavior
@@ -139,9 +148,16 @@ Framer Motion (already installed). Specifically:
 - On narrow screens (<480px), word pills reduce padding and font size slightly
 - The card remains full content-column width
 - Connection line SVG viewBox scales with container
+- Below 320px, pills may wrap to a second row; connection lines hide on wrapped layouts
+
+## Accessibility
+
+- Toggle: `role="radiogroup"` with `role="radio"` for each option, keyboard navigable with arrow keys
+- Play button: `aria-label="Play animation"`, activates on Enter/Space
+- `prefers-reduced-motion`: skip animation, show final state immediately
 
 ## File Changes Required
 
-1. **Create** `src/components/blog/RnnVsTransformer.jsx` — the component
-2. **Edit** `src/BlogPost.jsx` — import component and pass it to MDX via `mdxComponents`
+1. **Create** `src/components/RnnVsTransformer.jsx` — the component
+2. **Edit** `src/BlogPost.jsx` — import component and add `RnnVsTransformer: (props) => <RnnVsTransformer {...props} theme={theme} />` to `mdxComponents`
 3. **Edit** `src/posts/attention.mdx` — insert `<RnnVsTransformer />` after the RNN paragraph in "the problem attention solves" section
