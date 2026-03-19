@@ -204,12 +204,12 @@ where $\text{head}_i = \text{Attention}(Q \cdot W_{Q_i}, K \cdot W_{K_i}, V \cdo
 
 ## why i'm writing about attention
 
-a few months ago me and my friend started building a neural network framework from scratch in C++. custom autograd, SIMD optimized matrix operations, transformer support, the whole thing.
+a few months ago me and my friend started building whitematter, a neural network framework from scratch in C++. custom autograd, SIMD optimized matrix operations, transformer support, the whole thing.
 
 at some point i realized i was implementing attention, writing the q, k, v projections, the scaled dot product, multi-head attention. and i made it work effectively, no problem. but i couldn't explain fully why this was effective and how it worked and what really went behind this magical phenomenon. i was just simply copying the math without understanding.
 
-![multi-head attention constructor from our C++ framework](/whitematter-mha.png)
-*multi-head attention constructor in my project*
+![multi-head attention constructor from whitematter](/whitematter-mha.png)
+*multi-head attention constructor from whitematter*
 
 so i wrote this blog to help me understand what i'm actually implementing. i still don't understand the concept of attention at the level of a phd student, but this process helped me comprehend what is being computed, why certain things exist, and why any of this produces something meaningful.
 
