@@ -3,11 +3,11 @@ import { Link, useParams } from 'react-router-dom'
 import { BLOG_POSTS } from './Blog'
 import { useState, useEffect, useRef, useMemo } from 'react'
 import GlossaryTooltip from './components/GlossaryTooltip'
-import RnnVsTransformerDiagram from './components/RnnVsTransformerDiagram'
-import QkvDiagram from './components/QkvDiagram'
-import MultiHeadDiagram from './components/MultiHeadDiagram'
+import RnnVsTransformerDiagram from './posts/attention-for-vibe-coders/RnnVsTransformerDiagram'
+import QkvDiagram from './posts/attention-for-vibe-coders/QkvDiagram'
+import MultiHeadDiagram from './posts/attention-for-vibe-coders/MultiHeadDiagram'
 
-const mdxModules = import.meta.glob('./posts/*.mdx')
+const mdxModules = import.meta.glob('./posts/**/index.mdx')
 
 const BlogPost = ({ theme }) => {
   const { id } = useParams()
@@ -17,7 +17,7 @@ const BlogPost = ({ theme }) => {
 
   useEffect(() => {
     if (!post) return
-    const loader = mdxModules[`./posts/${id}.mdx`]
+    const loader = mdxModules[`./posts/${id}/index.mdx`]
     if (loader) {
       loader().then((mod) => setMdxContent(() => mod.default))
     }
