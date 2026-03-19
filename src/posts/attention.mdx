@@ -1,0 +1,220 @@
+## what is attention
+
+if you've ever read or talked about neural networks or anything in the field, you most likely came across the term attention.
+
+attention isn't some scary, complex, rocket science concept. to explain it simply, attention is a mechanism, just like how recursion, and backpropagation is also a mechanism. attention lets neural networks know which words actually matter. it's the reason why ai developed as rapidly as it did in the past seven years.
+
+## the problem attention solves
+
+before transformers (LLMs that use attention), language models used recurrent neural networks (RNNs). an RNN reads a sentence one word at a time, from left to right, constantly rewriting the hidden state.
+
+think of it as a single sticky note. after each word, you erase whatever was on it and rewrite a new summary. by the end of a long sentence, important details from earlier are often gone entirely. the model literally forgets. architectures like LSTMs and GRUs were designed to help with this, but in practice they still struggled with long-range dependencies.
+
+<RnnVsTransformerDiagram />
+
+attention lets every word in a given sentence look at every other word and decide what's relevant, and all of this happens simultaneously. transformers throw out sequential processing entirely. instead, every token looks directly at every other token at the same time. there is no waiting 50 steps to connect a pronoun back to the noun it refers to. the relationship is just there, computed in one shot.
+
+this also turns out to be a massive advantage for training the models. GPUs are designed to run thousands of calculations in parallel, which is why they are used to power things like video games, where they process massive amounts of data simultaneously. RNNs can't take advantage of this because each step depends on the one before it, forcing the GPU to sit idle and wait. with transformers, every token is processed at once and the GPU runs at full capacity. the same hardware trains a model significantly faster and cheaper.
+
+faster training means faster iteration. experiments that used to take weeks could now be done in days. that ability to grow and improve models faster is ultimately why the paper that first introduced the concept of attention, *attention is all you need* was such a breakthrough for ai researchers.
+
+## simple example
+
+take the sentence: _the cat sat on the mat._
+
+when the model processes "sat," what should it care about? it needs to know who sat, that's "cat." it probably wants to know where, that's "mat." "the" and "on" are basically filler.
+
+but the model has no built-in understanding of this. it just sees a sequence of tokens. attention is what figures out, purely from the data, that "sat" should be focused on "cat" and "mat" more than anything else. and it does this for every token at the same time.
+
+## query, key, and value
+
+in transformers, every token is represented by three vectors: a query, a key, and a value. here is a library analogy that helped me understand them.
+
+you walk into the library looking for a specific book. the description of what you're looking for is your **query (q)**. the **key (k)** is the label on each book's spine, how each token advertises itself to the others. your query scans every key to figure out what is relevant. once you find a match, you open the book. what is inside is the **value (v)**, the actual information that gets pulled in.
+
+every token produces its own q, k, and v simultaneously. going back to our example, "sat"'s query gets compared against the key of every other token in the sentence to figure out what is relevant. then the values of those relevant tokens get blended into sat's final representation.
+
+these are not manually designed. the model learns three weight matrices, **w_q**, **w_k**, and **w_v**, through gradient descent on billions of examples, adjusting the matrices to minimize the training loss. for any token embedding x:
+
+```
+q = x · w_q
+k = x · w_k
+v = x · w_v
+```
+
+**q** and **k** determine who should attend to whom. **v** is the actual information that flows. they are kept separate so the model can learn different representations for what to look for, what to broadcast, and what to actually share.
+
+<QkvDiagram />
+
+## how attention actually computes scores
+
+
+$$
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
+$$
+
+this is the full attention formula. let's break it down into four steps.
+
+1. **dot product**
+
+   $$
+   Q \cdot K^T
+   $$
+
+   - $Q$ is the query matrix. every token's query stacked into rows. each query asks "what should i attend to?"
+   - $K^T$ is the transpose of the key matrix. transposing flips it so that columns become rows, which is what lets us compute dot products between every query and every key in one multiplication
+   - $Q \cdot K^T$ produces a square matrix where each cell $(i, j)$ is the dot product between token $i$'s query and token $j$'s key. a higher value means token $i$ finds token $j$ more relevant
+   - output: raw score matrix
+
+2. **scale**
+
+   $$
+   \frac{QK^T}{\sqrt{d_k}}
+   $$
+
+   - $d_k$ is the dimensionality of the key vectors. in gpt-2, each head operates in 64 dimensions, so $d_k = 64$
+   - $\sqrt{d_k}$ is the square root of that dimension. for $d_k = 64$, this is $8$
+   - raw dot products grow larger as dimensions increase. without scaling, a few scores dominate after softmax, pushing gradients toward zero and making the model unable to learn. dividing by $\sqrt{d_k}$ keeps scores in a stable range
+   - output: scaled score matrix
+
+3. **softmax**
+
+   $$
+   \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)
+   $$
+
+   - softmax converts each row of scaled scores into a probability distribution that sums to 1
+   - each value now represents how much attention token $i$ should pay to token $j$, as a percentage
+   - output: attention weights matrix, usually represented as $A$
+
+4. **weighted sum**
+
+   $$
+   A \cdot V
+   $$
+
+   - $A$ is the attention weights matrix from step 3. each row tells one token how much to attend to every other token
+   - $V$ is the value matrix. every token's value vector stacked into rows. values carry the actual information content
+   - multiplying $A \cdot V$ blends all value vectors together, weighted by relevance. each token's output is no longer just its own embedding but a mix of every other token's information, proportional to how relevant they are
+   - output: matrix $Z$, the context-enriched representation of every token
+
+## a worked example
+
+to keep the math simple, we will use the sentence *cat sat mat* with made-up 3-dimensional vectors.
+
+| token | query (q) | key (k) | value (v) |
+| ----- | --------- | ------- | --------- |
+| cat   | [1.0, 0.5, 0.2] | [0.9, 0.4, 0.1] | [0.5, 0.1, 0.9] |
+| sat   | [0.3, 1.0, 0.8] | [0.2, 0.8, 0.9] | [0.2, 0.8, 0.3] |
+| mat   | [0.8, 0.3, 0.5] | [0.7, 0.2, 0.4] | [0.7, 0.4, 0.6] |
+
+stacking each token's vectors into matrices gives us:
+
+$$
+Q = \begin{bmatrix} 1.0 & 0.5 & 0.2 \\ 0.3 & 1.0 & 0.8 \\ 0.8 & 0.3 & 0.5 \end{bmatrix} \quad K = \begin{bmatrix} 0.9 & 0.4 & 0.1 \\ 0.2 & 0.8 & 0.9 \\ 0.7 & 0.2 & 0.4 \end{bmatrix} \quad V = \begin{bmatrix} 0.5 & 0.1 & 0.9 \\ 0.2 & 0.8 & 0.3 \\ 0.7 & 0.4 & 0.6 \end{bmatrix}
+$$
+
+### step 1: dot product $Q \cdot K^T$
+
+first, transpose $K$ so we can multiply queries against keys. transposing flips rows into columns:
+
+$$
+K^T = \begin{bmatrix} 0.9 & 0.2 & 0.7 \\ 0.4 & 0.8 & 0.2 \\ 0.1 & 0.9 & 0.4 \end{bmatrix}
+$$
+
+now multiply $Q \cdot K^T$. each cell $(i, j)$ is the dot product between token $i$'s query and token $j$'s key. let's compute sat's row (row 2) to see how it works:
+
+$$
+\text{sat} \rightarrow \text{cat}: (0.3 \times 0.9) + (1.0 \times 0.4) + (0.8 \times 0.1) = 0.75
+$$
+
+$$
+\text{sat} \rightarrow \text{sat}: (0.3 \times 0.2) + (1.0 \times 0.8) + (0.8 \times 0.9) = 1.58
+$$
+
+$$
+\text{sat} \rightarrow \text{mat}: (0.3 \times 0.7) + (1.0 \times 0.2) + (0.8 \times 0.4) = 0.73
+$$
+
+doing this for every row gives the full raw score matrix:
+
+$$
+QK^T = \begin{bmatrix} 1.12 & 0.78 & 0.88 \\ 0.75 & 1.58 & 0.73 \\ 0.89 & 0.85 & 0.82 \end{bmatrix}
+$$
+
+each row is one token's raw relevance scores against every other token. sat's row $[0.75, 1.58, 0.73]$ shows it finds itself most relevant (1.58), which makes sense since a word is naturally similar to itself.
+
+### step 2: scale by $\sqrt{d_k}$
+
+our vectors are 3-dimensional, so $d_k = 3$ and $\sqrt{d_k} \approx 1.73$. divide every value:
+
+$$
+\frac{QK^T}{\sqrt{d_k}} = \begin{bmatrix} 0.65 & 0.45 & 0.51 \\ 0.43 & 0.91 & 0.42 \\ 0.51 & 0.49 & 0.47 \end{bmatrix}
+$$
+
+the values are smaller now. this matters more in real models where $d_k = 64$ and raw dot products can reach values like 20 or 30, which would cause softmax to collapse into a one-hot vector.
+
+### step 3: softmax
+
+apply softmax to each row independently, converting raw scores into probabilities that sum to 1:
+
+$$
+A = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right) = \begin{bmatrix} 0.37 & 0.30 & 0.32 \\ 0.28 & 0.45 & 0.27 \\ 0.34 & 0.33 & 0.33 \end{bmatrix}
+$$
+
+this is the attention weights matrix. reading sat's row: it pays 45% attention to itself, 28% to cat, and 27% to mat. cat's row is more evenly spread because its scores were closer together after scaling.
+
+### step 4: weighted sum $A \cdot V$
+
+finally, multiply the attention weights by the value matrix. each token's output becomes a weighted blend of every token's value vector:
+
+$$
+Z = A \cdot V = \begin{bmatrix} 0.37 & 0.30 & 0.32 \\ 0.28 & 0.45 & 0.27 \\ 0.34 & 0.33 & 0.33 \end{bmatrix} \cdot \begin{bmatrix} 0.5 & 0.1 & 0.9 \\ 0.2 & 0.8 & 0.3 \\ 0.7 & 0.4 & 0.6 \end{bmatrix}
+$$
+
+for sat's row:
+
+$$
+z_{\text{sat}} = 0.28 \times [0.5, 0.1, 0.9] + 0.45 \times [0.2, 0.8, 0.3] + 0.27 \times [0.7, 0.4, 0.6] = [0.42, 0.50, 0.55]
+$$
+
+the full output:
+
+$$
+Z = \begin{bmatrix} 0.47 & 0.40 & 0.61 \\ 0.42 & 0.50 & 0.55 \\ 0.47 & 0.43 & 0.60 \end{bmatrix}
+$$
+
+each row in $Z$ is a token's new representation. sat started as $[0.2, 0.8, 0.3]$ but is now $[0.42, 0.50, 0.55]$. it has been enriched with information from cat and mat, weighted by how relevant they were. this is the core of what attention does: every token's meaning gets reshaped by the context around it.
+
+## multi-head attention
+
+so far we have been talking about a single attention computation. in practice, models like gpt-4 and claude opus run many of these in parallel. these are called attention heads.
+
+in gpt-2 (124M parameters), there are 12 attention heads per layer, each operating in 64 dimensions (768 total divided by 12 heads). each head has its own w_q, w_k, w_v matrices and learns to attend to a different type of relationship. one head might track subject-verb agreement. another might focus on nearby words. another might connect pronouns back to the nouns they refer to.
+
+the outputs from all heads get concatenated and projected back to the original dimension. so models are not looking at the sentence from one angle. they are running many parallel attention computations and merging the results.
+
+<MultiHeadDiagram />
+
+$$
+\text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \ldots, \text{head}_h) \cdot W_O
+$$
+
+where $\text{head}_i = \text{Attention}(Q \cdot W_{Q_i}, K \cdot W_{K_i}, V \cdot W_{V_i})$
+
+## why i'm writing about attention
+
+a few months ago me and my friend started building a neural network framework from scratch in C++. custom autograd, SIMD optimized matrix operations, transformer support, the whole thing.
+
+at some point i realized i was implementing attention, writing the q, k, v projections, the scaled dot product, multi-head attention. and i made it work effectively, no problem. but i couldn't explain fully why this was effective and how it worked and what really went behind this magical phenomenon. i was just simply copying the math without understanding.
+
+![multi-head attention constructor from our C++ framework](/whitematter-mha.png)
+*multi-head attention constructor in my project*
+
+so i wrote this blog to help me understand what i'm actually implementing. i still don't understand the concept of attention at the level of a phd student, but this process helped me comprehend what is being computed, why certain things exist, and why any of this produces something meaningful.
+
+if you're building something, i think it's important to understand how certain things work and why they work and what goes on underneath the hood. especially now, since ai is doing most of the work for us, it forces us to learn things that can be super useful in the future. writing this blog helped me a lot.
+## references
+
+vaswani et al. [attention is all you need (2017)](https://arxiv.org/abs/1706.03762)<br/>
+jay alammar [the illustrated transformer](https://jalammar.github.io/illustrated-transformer/)

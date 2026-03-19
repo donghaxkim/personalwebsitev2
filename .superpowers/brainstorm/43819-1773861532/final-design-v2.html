@@ -1,0 +1,71 @@
+<h2>AttentionPipeline v2: Formula-First</h2>
+<p class="subtitle">KaTeX formula is the hero element — large, prominent, with the active part glowing</p>
+
+<div class="mockup">
+  <div class="mockup-header">Step 2 of 4 — Scale</div>
+  <div class="mockup-body" style="padding: 32px 24px; text-align: center;">
+
+    <!-- HERO FORMULA — large, prominent -->
+    <div style="margin-bottom: 28px; position: relative;">
+      <div style="font-family: serif; font-size: 28px; letter-spacing: 1px; line-height: 1.6;">
+        <span style="opacity: 0.25;">Z = softmax</span><span style="opacity: 0.25;">(</span><span style="color: #5B8DEF; text-shadow: 0 0 20px rgba(91,141,239,0.4); font-weight: 500;">QK<sup style="font-size: 18px;">T</sup> / √d<sub style="font-size: 16px;">k</sub></span><span style="opacity: 0.25;">)</span><span style="opacity: 0.25;"> V</span>
+      </div>
+      <div style="font-size: 12px; color: #5B8DEF; opacity: 0.7; margin-top: 8px;">active: scaling raw scores to prevent gradient explosion</div>
+    </div>
+
+    <!-- Explanation text -->
+    <div style="max-width: 380px; margin: 0 auto 24px; font-size: 13px; opacity: 0.55; line-height: 1.7; text-align: left;">
+      raw scores get very large in high-dimensional space. dividing by √d<sub>k</sub> = √3 ≈ 1.73 keeps softmax from spiking.
+    </div>
+
+    <!-- Matrix — supporting role, smaller -->
+    <div style="border: 1.5px solid rgba(91,141,239,0.3); border-radius: 10px; padding: 14px 18px; display: inline-block; margin-bottom: 16px; background: rgba(91,141,239,0.03);">
+      <table style="margin: 0 auto; border-collapse: separate; border-spacing: 3px;">
+        <tr>
+          <td style="width: 18px;"></td>
+          <td style="padding: 2px 6px; font-size: 9px; opacity: 0.4; text-align: center;">cat</td>
+          <td style="padding: 2px 6px; font-size: 9px; opacity: 0.4; text-align: center;">sat</td>
+          <td style="padding: 2px 6px; font-size: 9px; opacity: 0.4; text-align: center;">mat</td>
+        </tr>
+        <tr>
+          <td style="font-size: 9px; opacity: 0.4; padding-right: 6px;">cat</td>
+          <td style="padding: 6px 10px; background: rgba(91,141,239,0.1); border-radius: 4px; font-family: monospace; font-size: 12px;">0.57</td>
+          <td style="padding: 6px 10px; background: rgba(91,141,239,0.07); border-radius: 4px; font-family: monospace; font-size: 12px;">0.42</td>
+          <td style="padding: 6px 10px; background: rgba(91,141,239,0.08); border-radius: 4px; font-family: monospace; font-size: 12px;">0.48</td>
+        </tr>
+        <tr>
+          <td style="font-size: 9px; opacity: 0.4; padding-right: 6px;">sat</td>
+          <td style="padding: 6px 10px; background: rgba(91,141,239,0.08); border-radius: 4px; font-family: monospace; font-size: 12px;">0.43</td>
+          <td style="padding: 6px 10px; background: rgba(91,141,239,0.2); border-radius: 4px; font-family: monospace; font-size: 12px; font-weight: bold; color: #5B8DEF;">0.91</td>
+          <td style="padding: 6px 10px; background: rgba(91,141,239,0.08); border-radius: 4px; font-family: monospace; font-size: 12px;">0.42</td>
+        </tr>
+        <tr>
+          <td style="font-size: 9px; opacity: 0.4; padding-right: 6px;">mat</td>
+          <td style="padding: 6px 10px; background: rgba(91,141,239,0.09); border-radius: 4px; font-family: monospace; font-size: 12px;">0.50</td>
+          <td style="padding: 6px 10px; background: rgba(91,141,239,0.06); border-radius: 4px; font-family: monospace; font-size: 12px;">0.40</td>
+          <td style="padding: 6px 10px; background: rgba(91,141,239,0.05); border-radius: 4px; font-family: monospace; font-size: 12px;">0.34</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Step Indicator -->
+    <div style="display: flex; justify-content: center; gap: 6px; align-items: center; margin-top: 12px;">
+      <div style="width: 20px; height: 3px; background: #5B8DEF; border-radius: 2px;"></div>
+      <div style="width: 20px; height: 3px; background: #5B8DEF; border-radius: 2px;"></div>
+      <div style="width: 20px; height: 3px; background: rgba(255,255,255,0.12); border-radius: 2px;"></div>
+      <div style="width: 20px; height: 3px; background: rgba(255,255,255,0.12); border-radius: 2px;"></div>
+    </div>
+    <div style="font-size: 10px; opacity: 0.3; margin-top: 6px;">scroll ↓</div>
+  </div>
+</div>
+
+<div style="margin-top: 32px;">
+  <h3>Key changes from v1</h3>
+  <ul style="font-size: 14px; line-height: 1.8; opacity: 0.8;">
+    <li><strong>Formula is ~28px</strong> with a glow effect on the active part — it's the first thing you see</li>
+    <li><strong>Explanation text</strong> below the formula describes what the step does in plain English</li>
+    <li><strong>Matrix is smaller</strong> — supporting evidence, not the main attraction</li>
+    <li><strong>Removed thumbnails</strong> for completed steps — cleaner, less clutter</li>
+    <li>The formula transitions as you scroll: inactive parts fade to 25% opacity, active part glows</li>
+  </ul>
+</div>

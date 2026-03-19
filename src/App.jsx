@@ -24,8 +24,8 @@ const Home = ({ theme }) => {
           color: theme === 'dark' ? 'rgb(30, 30, 30)' : 'white',
           fontSize: '0.8125rem',
           fontWeight: 500,
-          px: 1.5,
-          py: 1.25,
+          px: 1,
+          py: 0.5,
           borderRadius: '8px',
           boxShadow: 'none',
         },
@@ -40,8 +40,8 @@ const Home = ({ theme }) => {
       transition={{ duration: 0.5 }}
       className="w-full max-w-2xl mx-auto" style={{ paddingLeft: '1rem', paddingRight: '1rem' }}
     >
-      <h1 className="text-6xl md:text-6xl font-semibold tracking-tighter text-left -mt-8 md:-mt-12" style={{ fontFamily: "'Gowun Batang', serif", marginBottom: '0.88rem' }}>
-        Dongha Kim
+      <h1 className="text-4xl md:text-5xl font-semibold tracking-tighter text-left -mt-8 md:-mt-12" style={{ fontFamily: "'Gowun Batang', serif", marginBottom: '0.5rem' }}>
+        dongha kim
       </h1>
       
       <motion.div
@@ -54,7 +54,7 @@ const Home = ({ theme }) => {
         }`}
       >
         <p>
-          I study <strong className="font-medium">math</strong> at <strong className="font-medium">waterloo</strong> and do <strong className="font-medium">software</strong> stuff. I talk about random things at <strong className="font-medium">@imdonghakim</strong> on{' '}
+          i study <strong className="font-medium">math</strong> at <strong className="font-medium">waterloo</strong> and do <strong className="font-medium">software</strong> stuff. i talk about random things at <strong className="font-medium">@imdonghakim</strong> on{' '}
           <a
             href="https://instagram.com/imdonghakim"
             target="_blank"
@@ -87,7 +87,7 @@ const Home = ({ theme }) => {
           >
             x
           </a>
-          . I like playing basketball and hanging out with my cat. Email me if you wanna make something cool{' '}
+          . i like playing basketball and hanging out with my cat. email me if you wanna make something cool{' '}
           <a
             href="mailto:d396kim@uwaterloo.ca"
             className={`font-medium underline ${

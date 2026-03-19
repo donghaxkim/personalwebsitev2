@@ -7,10 +7,9 @@ const IMAGE_URLS = Object.values(images)
 const LERP_FACTOR = 0.12
 const SCALE_LERP = 0.15
 const HOVER_SCALE_AMOUNT = 0.12
-// Acceleration curve: slow drags stay precise, fast drags get amplified
-const ACCEL_THRESHOLD = 6   // deltas below this pass through ~1:1
-const ACCEL_MULTIPLIER = 1.8 // how much to amplify fast drags
-const MAX_DRAG_DELTA = 40    // hard cap after acceleration
+// Drag speed: dampen all movement, cap max delta
+const DRAG_DAMPEN = 0.5      // scale all drag deltas (1 = normal, lower = slower)
+const MAX_DRAG_DELTA = 20    // hard cap on pixels per frame
 const TIER1_COUNT = 40
 
 function getGridMetrics(containerSize) {
@@ -33,9 +32,6 @@ const shuffleArray = (array) => {
   return shuffled
 }
 
-const isTouchDevice = () =>
-  typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0)
-
 const InfiniteGrid = ({ theme }) => {
   const [containerSize, setContainerSize] = useState({ width: window.innerWidth, height: window.innerHeight })
   const [isDragging, setIsDragging] = useState(false)
@@ -53,9 +49,8 @@ const InfiniteGrid = ({ theme }) => {
   const lastPanDelta = useRef({ x: 0, y: 0 })
   const isDraggingRef = useRef(false)
 
-  // Mouse state for hover scale (desktop only)
+  // Pointer position for hover scale
   const mousePos = useRef({ x: -9999, y: -9999 })
-  const isTouch = useRef(isTouchDevice())
 
   // Per-item current scale for lerping
   const itemScales = useRef({})
@@ -110,7 +105,6 @@ const InfiniteGrid = ({ theme }) => {
     const gridWidth = cols * totalCell
     const gridHeight = rows * totalCell
     const hoverRadiusSq = hoverRadius * hoverRadius
-    const enableHover = !isTouch.current
 
     const tick = () => {
       // Apply momentum when not dragging
@@ -142,16 +136,14 @@ const InfiniteGrid = ({ theme }) => {
         const px = mod((item.relX * totalCell) + cx + totalCell, gridWidth) - totalCell
         const py = mod((item.relY * totalCell) + cy + totalCell, gridHeight) - totalCell
 
-        // Hover scale (desktop only)
+        // Hover scale
         let targetScale = 1
-        if (enableHover) {
-          const centerX = px + cellSize / 2
-          const centerY = py + cellSize / 2
-          const distSq = (mx - centerX) ** 2 + (my - centerY) ** 2
-          if (distSq < hoverRadiusSq) {
-            const dist = Math.sqrt(distSq)
-            targetScale = 1 + (1 - dist / hoverRadius) * HOVER_SCALE_AMOUNT
-          }
+        const centerX = px + cellSize / 2
+        const centerY = py + cellSize / 2
+        const distSq = (mx - centerX) ** 2 + (my - centerY) ** 2
+        if (distSq < hoverRadiusSq) {
+          const dist = Math.sqrt(distSq)
+          targetScale = 1 + (1 - dist / hoverRadius) * HOVER_SCALE_AMOUNT
         }
 
         // Lerp scale
@@ -187,10 +179,8 @@ const InfiniteGrid = ({ theme }) => {
     const clientX = e.touches ? e.touches[0].clientX : e.clientX
     const clientY = e.touches ? e.touches[0].clientY : e.clientY
 
-    // Update mouse position for hover (desktop)
-    if (!e.touches) {
-      mousePos.current = { x: clientX, y: clientY }
-    }
+    // Update pointer position for hover zoom (mouse and touch)
+    mousePos.current = { x: clientX, y: clientY }
 
     if (!isDraggingRef.current) return
 
@@ -198,18 +188,13 @@ const InfiniteGrid = ({ theme }) => {
     const rawDy = clientY - pointerStart.current.y
     pointerStart.current = { x: clientX, y: clientY }
 
-    const accelerate = (d) => {
-      const abs = Math.abs(d)
-      const sign = Math.sign(d)
-      // Below threshold: 1:1, above: amplify the excess
-      const accel = abs <= ACCEL_THRESHOLD
-        ? abs
-        : ACCEL_THRESHOLD + (abs - ACCEL_THRESHOLD) * ACCEL_MULTIPLIER
-      return sign * Math.min(accel, MAX_DRAG_DELTA)
+    const clampDrag = (d) => {
+      const dampened = d * DRAG_DAMPEN
+      return Math.sign(dampened) * Math.min(Math.abs(dampened), MAX_DRAG_DELTA)
     }
 
-    const dx = accelerate(rawDx)
-    const dy = accelerate(rawDy)
+    const dx = clampDrag(rawDx)
+    const dy = clampDrag(rawDy)
 
     panTarget.current.x += dx
     panTarget.current.y += dy

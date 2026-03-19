@@ -1,0 +1,77 @@
+<h2>Toggle Card: RNN vs Transformer</h2>
+<p class="subtitle">How should the toggle card look and behave? Pick the layout that feels right.</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Sentence-Focused</h3>
+      <p>A sentence like "the cat sat on the mat" is displayed in the card. Toggle to <strong>RNN mode</strong>: words highlight one at a time left-to-right, and earlier words fade/blur as the "sticky note" gets overwritten — you can see information literally disappearing. Toggle to <strong>Transformer mode</strong>: all words light up simultaneously with connection lines between related words (cat↔sat, sat↔mat), everything stays visible.</p>
+      <div style="margin-top: 12px; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+        <div style="font-size: 13px; opacity: 0.5; margin-bottom: 8px;">ROUGH IDEA</div>
+        <div style="display: flex; gap: 8px; justify-content: center; font-size: 18px; font-family: monospace;">
+          <span style="opacity: 0.15;">the</span>
+          <span style="opacity: 0.2;">cat</span>
+          <span style="opacity: 0.35;">sat</span>
+          <span style="opacity: 0.5;">on</span>
+          <span style="opacity: 0.7;">the</span>
+          <span style="opacity: 1.0; border-bottom: 2px solid #6C8EFF;">mat</span>
+        </div>
+        <div style="text-align: center; font-size: 12px; opacity: 0.4; margin-top: 6px;">↑ RNN: earlier words fading away</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Pipeline Comparison</h3>
+      <p>The card shows a horizontal pipeline of word "slots." Toggle to <strong>RNN mode</strong>: a single processing cursor moves left to right through slots sequentially, with a small "memory bar" that shrinks as it goes — visualizing the bottleneck. Toggle to <strong>Transformer mode</strong>: all slots process simultaneously with a grid of attention lines, and the memory bar stays full.</p>
+      <div style="margin-top: 12px; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+        <div style="font-size: 13px; opacity: 0.5; margin-bottom: 8px;">ROUGH IDEA</div>
+        <div style="display: flex; gap: 4px; justify-content: center;">
+          <div style="width: 48px; height: 32px; border-radius: 4px; background: #6C8EFF; display: flex; align-items: center; justify-content: center; font-size: 11px;">the</div>
+          <div style="width: 48px; height: 32px; border-radius: 4px; background: #6C8EFF; display: flex; align-items: center; justify-content: center; font-size: 11px;">cat</div>
+          <div style="width: 48px; height: 32px; border-radius: 4px; background: #6C8EFF; display: flex; align-items: center; justify-content: center; font-size: 11px;">sat</div>
+          <div style="width: 48px; height: 32px; border-radius: 4px; background: rgba(108,142,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 11px; opacity: 0.5;">on</div>
+          <div style="width: 48px; height: 32px; border-radius: 4px; background: rgba(108,142,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 11px; opacity: 0.3;">the</div>
+          <div style="width: 48px; height: 32px; border-radius: 4px; background: rgba(108,142,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 11px; opacity: 0.2;">mat</div>
+        </div>
+        <div style="margin-top: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; height: 6px; width: 100%;">
+          <div style="background: #6C8EFF; height: 100%; width: 35%; border-radius: 4px;"></div>
+        </div>
+        <div style="text-align: center; font-size: 12px; opacity: 0.4; margin-top: 6px;">↑ RNN: memory shrinking as it processes</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Dual View: Sentence + Speed</h3>
+      <p>Combines both ideas. <strong>Top half</strong>: the sentence visualization (fading words vs. connected words). <strong>Bottom half</strong>: a small "processing speed" indicator — RNN shows a slow sequential bar filling left to right, Transformer shows all bars filling at once. Drives home both the information loss <em>and</em> the speed advantage in one card.</p>
+      <div style="margin-top: 12px; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+        <div style="font-size: 13px; opacity: 0.5; margin-bottom: 8px;">ROUGH IDEA</div>
+        <div style="display: flex; gap: 8px; justify-content: center; font-size: 16px; font-family: monospace; margin-bottom: 12px;">
+          <span style="opacity: 0.15;">the</span>
+          <span style="opacity: 0.2;">cat</span>
+          <span style="opacity: 0.4;">sat</span>
+          <span style="opacity: 0.6;">on</span>
+          <span style="opacity: 0.8;">the</span>
+          <span style="opacity: 1.0;">mat</span>
+        </div>
+        <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
+          <div style="display: flex; gap: 3px;">
+            <div style="flex:1; height: 8px; background: #6C8EFF; border-radius: 2px;"></div>
+            <div style="flex:1; height: 8px; background: #6C8EFF; border-radius: 2px;"></div>
+            <div style="flex:1; height: 8px; background: #6C8EFF; border-radius: 2px;"></div>
+            <div style="flex:1; height: 8px; background: rgba(108,142,255,0.2); border-radius: 2px;"></div>
+            <div style="flex:1; height: 8px; background: rgba(108,142,255,0.1); border-radius: 2px;"></div>
+            <div style="flex:1; height: 8px; background: rgba(108,142,255,0.05); border-radius: 2px;"></div>
+          </div>
+          <div style="text-align: center; font-size: 12px; opacity: 0.4; margin-top: 6px;">↑ RNN: sequential processing, one at a time</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

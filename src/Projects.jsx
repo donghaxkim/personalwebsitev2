@@ -38,10 +38,10 @@ const Projects = ({ theme }) => {
       style={{ paddingTop: '6rem', paddingBottom: '4rem', paddingLeft: '1.5rem', paddingRight: '1.5rem' }}
     >
       <h1 
-        className="text-6xl md:text-6xl font-semibold tracking-tighter text-left mb-[0.88rem]" 
+        className="text-4xl md:text-5xl font-semibold tracking-tighter text-left mb-[0.5rem]" 
         style={{ fontFamily: "'Gowun Batang', serif" }}
       >
-        Projects
+        projects
       </h1>
       
       <motion.div
@@ -49,7 +49,7 @@ const Projects = ({ theme }) => {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
         className="space-y-12 md:space-y-16"
-        style={{ fontFamily: "'Karla', sans-serif", marginTop: '0.88rem' }}
+        style={{ fontFamily: "'Karla', sans-serif", marginTop: '0.5rem' }}
       >
         {projects.map((project, index) => (
           <motion.div
