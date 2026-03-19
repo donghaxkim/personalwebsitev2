@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 export const BLOG_POSTS = [
   {
-    id: 'attention',
+    id: 'attention-for-vibe-coders',
     title: "attention for vibe coders",
     date: '2026-03-19',
     author: 'dongha kim',
