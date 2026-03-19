@@ -5,7 +5,7 @@ export const BLOG_POSTS = [
   {
     id: 'attention',
     title: "attention for vibe coders",
-    date: '2026-03-17',
+    date: '2026-03-19',
     author: 'dongha kim',
     readTime: 14,
     cover: '/attention-cover.jpg',
