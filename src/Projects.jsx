@@ -34,7 +34,7 @@ const Projects = ({ theme }) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.5 }}
-      className="w-full max-w-2xl mx-auto h-full overflow-y-auto"
+      className="w-full max-w-2xl mx-auto self-start"
       style={{ paddingTop: '6rem', paddingBottom: '4rem', paddingLeft: '1.5rem', paddingRight: '1.5rem' }}
     >
       <h1 

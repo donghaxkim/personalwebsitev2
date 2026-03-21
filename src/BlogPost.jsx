@@ -115,7 +115,7 @@ const BlogPost = ({ theme }) => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full mx-auto h-full overflow-y-auto"
+        className="w-full mx-auto self-start"
         style={{ maxWidth: '32rem', paddingTop: '6rem', paddingBottom: '4rem', paddingLeft: '1.5rem', paddingRight: '1.5rem' }}
       >
         <article

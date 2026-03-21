@@ -23,7 +23,7 @@ const Blog = ({ theme }) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.5 }}
-      className="w-full mx-auto h-full overflow-y-auto"
+      className="w-full mx-auto self-start"
       style={{ maxWidth: '32rem', paddingTop: '6rem', paddingBottom: '4rem', paddingLeft: '1.5rem', paddingRight: '1.5rem' }}
     >
       <h1
