@@ -109,12 +109,21 @@ const BlogPost = ({ theme }) => {
     )
   }
 
+  if (!MdxContent) {
+    return (
+      <div
+        className="w-full mx-auto self-start"
+        style={{ maxWidth: '32rem', paddingTop: '6rem', paddingBottom: '4rem', paddingLeft: '1.5rem', paddingRight: '1.5rem' }}
+      />
+    )
+  }
+
   return (
     <>
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4 }}
         className="w-full mx-auto self-start"
         style={{ maxWidth: '32rem', paddingTop: '6rem', paddingBottom: '4rem', paddingLeft: '1.5rem', paddingRight: '1.5rem' }}
       >
@@ -155,7 +164,8 @@ const BlogPost = ({ theme }) => {
               <img
                 src={post.cover}
                 alt=""
-                className="w-full rounded-lg"
+                draggable={false}
+                className="w-full rounded-lg select-none"
                 style={{ objectFit: 'cover', marginTop: '0.75rem', marginBottom: '0' }}
               />
               <hr
@@ -171,7 +181,7 @@ const BlogPost = ({ theme }) => {
               theme === 'dark' ? 'prose-invert' : ''
             }`}
           >
-            {MdxContent ? <MdxContent components={mdxComponents} /> : <p className="opacity-50">Loading...</p>}
+            <MdxContent components={mdxComponents} />
           </div>
         </article>
       </motion.div>
