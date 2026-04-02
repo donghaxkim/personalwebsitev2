@@ -52,33 +52,33 @@ const Home = ({ theme }) => {
           theme === 'dark' ? 'text-white/80' : 'text-black/80'
         }`}
       >
-        <p>i study{' '}<strong className="font-medium">math</strong>{' '}at{' '}<strong className="font-medium">waterloo</strong>{' '}and enjoy software. i talk about random things at{' '}<strong className="font-medium">@imdonghakim</strong>{' '}on{' '}{' '}{' '}<a
+        <p>i study <strong className="font-medium">math</strong> at <strong className="font-medium">waterloo</strong> and enjoy software. i talk about random things at <strong className="font-medium">@imdonghakim</strong> on <a
             href="https://instagram.com/imdonghakim"
             target="_blank"
             rel="noopener noreferrer"
             className={`font-medium underline ${
               theme === 'dark' ? 'text-white hover:text-white/80' : 'text-black hover:text-black/70'
             }`}
-          >instagram</a>{' '},{' '}{' '}{' '}<a
+          >instagram</a>, <a
             href="https://tiktok.com/@imdonghakim"
             target="_blank"
             rel="noopener noreferrer"
             className={`font-medium underline ${
               theme === 'dark' ? 'text-white hover:text-white/80' : 'text-black hover:text-black/70'
             }`}
-          >tiktok</a>{' '}, and{' '}{' '}{' '}<a
+          >tiktok</a>, and <a
             href="https://x.com/imdonghakim"
             target="_blank"
             rel="noopener noreferrer"
             className={`font-medium underline ${
               theme === 'dark' ? 'text-white hover:text-white/80' : 'text-black hover:text-black/70'
             }`}
-          >x</a>{' '}. i like playing basketball and hanging out with my cat. message me if you wanna make something cool{' '}{' '}{' '}<a
+          >x</a>. i like playing basketball and hanging out with my cat. message me if you wanna make something cool <a
             href="mailto:d396kim@uwaterloo.ca"
             className={`font-medium underline ${
               theme === 'dark' ? 'text-white hover:text-white/80' : 'text-black hover:text-black/70'
             }`}
-          >here</a>{' '}.</p>
+          >here</a>.</p>
         
         {/* Social Media Icons */}
         <div className="flex gap-4 mt-14 select-none">
