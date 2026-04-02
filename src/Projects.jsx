@@ -4,6 +4,12 @@ import { ExternalLink } from 'lucide-react'
 const Projects = ({ theme }) => {
   const projects = [
     {
+      name: "react-rewrite",
+      techStack: ["TypeScript", "React", "Node.js"],
+      description: "Figma for your localhost. move elements, edit properties, change your text, and it writes back changes to source files automatically.",
+      github: "https://github.com/donghaxkim/react-rewrite"
+    },
+    {
       name: "UW GitRank",
       techStack: [
         "Next.js",
