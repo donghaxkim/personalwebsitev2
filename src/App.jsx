@@ -73,7 +73,7 @@ const Home = ({ theme }) => {
             className={`font-medium underline ${
               theme === 'dark' ? 'text-white hover:text-white/80' : 'text-black hover:text-black/70'
             }`}
-          >youtube</a> as well. i like playing basketball and hanging out with my cat. message me if you wanna make something cool <a
+          >youtube</a> as well. i like playing basketball and ping pong as well as hanging out with my friends. message me if you wanna make something cool <a
             href="mailto:d396kim@uwaterloo.ca"
             className={`font-medium underline ${
               theme === 'dark' ? 'text-white hover:text-white/80' : 'text-black hover:text-black/70'
