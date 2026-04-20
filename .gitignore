@@ -27,6 +27,10 @@ dist-ssr
 .superpowers/
 docs/superpowers/
 
+# Tool artifacts
+.playwright-mcp/
+.react-rewrite/
+
 # Large media files
 *.MOV
 *.mov

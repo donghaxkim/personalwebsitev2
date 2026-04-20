@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom'
 import { Analytics } from '@vercel/analytics/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MdEmail } from 'react-icons/md'
-import { FaLinkedin, FaGithub, FaXTwitter } from 'react-icons/fa6'
+import { FaLinkedin, FaGithub, FaXTwitter, FaYoutube } from 'react-icons/fa6'
 import Navbar from './Navbar'
 import SpotifyPlayer from './SpotifyPlayer'
 import Projects from './Projects'
@@ -52,7 +52,7 @@ const Home = ({ theme }) => {
           theme === 'dark' ? 'text-white/80' : 'text-black/80'
         }`}
       >
-        <p>i study <strong className="font-medium">math</strong> at <strong className="font-medium">waterloo</strong> and enjoy software. i talk about random things at <strong className="font-medium">@imdonghakim</strong> on <a
+        <p>i study <strong className="font-medium">math</strong> at <strong className="font-medium">waterloo</strong> and enjoy software. i post videos <strong className="font-medium">@donghaxkim</strong> on <a
             href="https://instagram.com/imdonghakim"
             target="_blank"
             rel="noopener noreferrer"
@@ -60,20 +60,20 @@ const Home = ({ theme }) => {
               theme === 'dark' ? 'text-white hover:text-white/80' : 'text-black hover:text-black/70'
             }`}
           >instagram</a>, <a
-            href="https://tiktok.com/@imdonghakim"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`font-medium underline ${
-              theme === 'dark' ? 'text-white hover:text-white/80' : 'text-black hover:text-black/70'
-            }`}
-          >tiktok</a>, and <a
             href="https://x.com/imdonghakim"
             target="_blank"
             rel="noopener noreferrer"
             className={`font-medium underline ${
               theme === 'dark' ? 'text-white hover:text-white/80' : 'text-black hover:text-black/70'
             }`}
-          >x</a>. i like playing basketball and hanging out with my cat. message me if you wanna make something cool <a
+          >x</a>, and hopefully on <a
+            href="https://www.youtube.com/channel/UChuyN02FqlGELXMbhrwxHPg"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`font-medium underline ${
+              theme === 'dark' ? 'text-white hover:text-white/80' : 'text-black hover:text-black/70'
+            }`}
+          >youtube</a> as well. i like playing basketball and hanging out with my cat. message me if you wanna make something cool <a
             href="mailto:d396kim@uwaterloo.ca"
             className={`font-medium underline ${
               theme === 'dark' ? 'text-white hover:text-white/80' : 'text-black hover:text-black/70'
@@ -132,6 +132,19 @@ const Home = ({ theme }) => {
               draggable={false}
             >
               <FaXTwitter size={20} />
+            </a>
+          </Tooltip>
+          <Tooltip title="YouTube" placement="bottom" enterDelay={500} slotProps={tooltipSlotProps}>
+            <a
+              href="https://www.youtube.com/channel/UChuyN02FqlGELXMbhrwxHPg"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`transition-opacity ${
+                theme === 'dark' ? 'text-white/60 hover:text-white/90' : 'text-black/60 hover:text-black/90'
+              }`}
+              draggable={false}
+            >
+              <FaYoutube size={20} />
             </a>
           </Tooltip>
         </div>
