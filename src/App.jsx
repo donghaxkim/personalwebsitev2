@@ -66,7 +66,7 @@ const Home = ({ theme }) => {
             className={`font-medium underline ${
               theme === 'dark' ? 'text-white hover:text-white/80' : 'text-black hover:text-black/70'
             }`}
-          >x</a>, and hopefully on <a
+          >x</a>, and hopefully soon on <a
             href="https://www.youtube.com/channel/UChuyN02FqlGELXMbhrwxHPg"
             target="_blank"
             rel="noopener noreferrer"
