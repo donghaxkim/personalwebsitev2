@@ -53,14 +53,14 @@ const Home = ({ theme }) => {
         }`}
       >
         <p>i study <strong className="font-medium">math</strong> at <strong className="font-medium">waterloo</strong> and enjoy software. i post videos <strong className="font-medium">@donghaxkim</strong> on <a
-            href="https://instagram.com/imdonghakim"
+            href="https://instagram.com/donghaxkim"
             target="_blank"
             rel="noopener noreferrer"
             className={`font-medium underline ${
               theme === 'dark' ? 'text-white hover:text-white/80' : 'text-black hover:text-black/70'
             }`}
           >instagram</a>, <a
-            href="https://x.com/imdonghakim"
+            href="https://x.com/donghaxkim"
             target="_blank"
             rel="noopener noreferrer"
             className={`font-medium underline ${
@@ -123,7 +123,7 @@ const Home = ({ theme }) => {
           </Tooltip>
           <Tooltip title="X" placement="bottom" enterDelay={500} slotProps={tooltipSlotProps}>
             <a
-              href="https://x.com/imdonghakim"
+              href="https://x.com/donghaxkim"
               target="_blank"
               rel="noopener noreferrer"
               className={`transition-opacity ${
